@@ -110,3 +110,24 @@ input[type="color"] { width: 38px; height: 32px; padding: 0; border: 1px solid v
 .linkrow { display: flex; gap: 8px; flex-wrap: wrap; }
 .linkrow input { flex: 1; min-width: 200px; }
 .center-card { max-width: 460px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+
+/* Recipient page: envelope opens, then the card rises out */
+.gift { gap: 20px; text-align: center; }
+.gift .eyebrow { align-self: center; }
+.env-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.env-title { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.5rem; line-height: 1.25; overflow-wrap: anywhere; text-wrap: balance; }
+.envelope { position: relative; width: min(100%, 320px); aspect-ratio: 4 / 3; border: 0; background: none; padding: 0; cursor: pointer; perspective: 900px; }
+.env-body { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(150deg, var(--env1), var(--env2)); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 12px 28px rgba(0,0,0,.18); }
+.env-flap { position: absolute; left: 0; right: 0; top: 0; height: 58%; background: linear-gradient(180deg, color-mix(in srgb, var(--env1) 80%, #000), var(--env1)); clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top center; transition: transform .6s ease; border-radius: 12px 12px 0 0; }
+.envelope.open .env-flap { transform: rotateX(180deg); }
+.env-seal { position: absolute; left: 50%; top: 52%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: var(--env-ink); color: var(--env1); display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.25); transition: opacity .3s ease; }
+.env-seal svg { width: 26px; height: 26px; }
+.envelope.open .env-seal { opacity: 0; }
+.cta-note { margin-bottom: 10px; }
+.reveal { text-align: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { animation: rise .6s ease both; }
+  .envelope:not(.open) { animation: nudge 2.4s ease-in-out infinite; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(28px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
