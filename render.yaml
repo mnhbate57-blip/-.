@@ -1,0 +1,36 @@
+# Render.com Blueprint. Push this folder to a GitHub repo, then in Render: New > Blueprint.
+services:
+  - type: web
+    name: setgeliin-shuudan
+    runtime: node
+    plan: starter            # persistent disk needs a paid plan
+    buildCommand: "echo no build step"
+    startCommand: "node server.js"
+    healthCheckPath: /api/config
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_FILE
+        value: /var/data/orders.json
+      - key: PAYMENT_PROVIDER
+        value: mock            # change to qpay after sandbox testing
+      - key: CARD_PRICE_MNT
+        value: "3000"
+      - key: BASE_URL
+        sync: false            # set to your https address, e.g. https://setgeliin-shuudan.onrender.com
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: QPAY_BASE_URL
+        value: https://merchant-sandbox.qpay.mn/v2
+      - key: QPAY_USERNAME
+        sync: false
+      - key: QPAY_PASSWORD
+        sync: false
+      - key: QPAY_INVOICE_CODE
+        sync: false
