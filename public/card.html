@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сэтгэлийн шуудан</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Comfortaa:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="mast">
+    <span class="eyebrow">Мэндчилгээ, захидал</span>
+    <h1>Сэтгэлийн шуудан</h1>
+    <p class="lede">Карт бичиж, төлбөрөө төлөөд, хайртай хүндээ холбоосоор нь илгээ. Төлбөр баталгаажмагц карт бэлэн болно.</p>
+  </header>
+
+  <section id="view-compose" class="compose" aria-labelledby="compose-title">
+    <form class="panel" id="form" novalidate>
+      <h2 id="compose-title">Мэндчилгээ бичих</h2>
+      <div class="sub"><span class="legend" id="type-legend">Загвар</span><div class="opts" id="types" role="group" aria-labelledby="type-legend"></div></div>
+      <div class="row2">
+        <div class="field"><label for="to">Хэнд</label><input type="text" id="to" maxlength="60" placeholder="Хайртай найздаа" autocomplete="off"></div>
+        <div class="field"><label for="from">Хэнээс</label><input type="text" id="from" maxlength="60" placeholder="Таны нэр" autocomplete="nickname"></div>
+      </div>
+      <div class="field">
+        <label for="message">Зурвас</label>
+        <textarea id="message" maxlength="600" placeholder="Сэтгэлийнхээ үгийг энд бичээрэй…"></textarea>
+        <span class="count" id="count">0/600</span>
+      </div>
+      <div class="sub">
+        <span class="legend" id="pal-legend">Өнгө</span>
+        <div class="swatches" id="palettes" role="group" aria-labelledby="pal-legend"></div>
+        <div class="custom-row" id="custom" hidden>
+          <label for="c1">Дээд <input type="color" id="c1" value="#8e1b4a"></label>
+          <label for="c2">Доод <input type="color" id="c2" value="#d6456f"></label>
+          <label for="ink">Үсэг <input type="color" id="ink" value="#fff3f7"></label>
+        </div>
+      </div>
+      <div class="sub"><span class="legend" id="pat-legend">Хээ</span><div class="opts" id="patterns" role="group" aria-labelledby="pat-legend"></div></div>
+      <div class="sub"><span class="legend" id="font-legend">Үсгийн хэв</span><div class="opts" id="fonts" role="group" aria-labelledby="font-legend"></div></div>
+      <div class="sub"><span class="legend" id="motif-legend">Зураг</span><div class="opts" id="motifs" role="group" aria-labelledby="motif-legend"></div></div>
+      <div class="sub"><span class="legend" id="align-legend">Байрлал</span><div class="opts" id="aligns" role="group" aria-labelledby="align-legend"></div></div>
+      <div class="sub">
+        <span class="legend">Зураг (3 хүртэл)</span>
+        <div><button type="button" class="btn ghost" id="add-img">Зураг нэмэх</button></div>
+        <input type="file" id="img-input" accept="image/*" multiple hidden>
+        <div class="picked" id="picked"></div>
+        <div class="note" id="media-note" role="status">Зургийг автоматаар жижигрүүлнэ.</div>
+      </div>
+      <div class="price-line">
+        <span class="note">Картын үнэ</span>
+        <span class="price" id="price">…</span>
+      </div>
+      <div><button type="submit" class="btn" id="pay-btn">Төлбөр төлөх</button></div>
+      <div class="status" id="status" role="status"></div>
+    </form>
+    <div class="preview-wrap">
+      <span class="preview-label">Урьдчилан харах</span>
+      <div id="preview"></div>
+    </div>
+  </section>
+
+  <section id="view-pay" class="pay-grid" hidden aria-labelledby="pay-title">
+    <div class="panel qrbox">
+      <h2 id="pay-title">Төлбөр төлөх</h2>
+      <p class="price" id="pay-amount"></p>
+      <img id="qr" alt="QPay QR код" width="260" height="260">
+      <p class="note" id="qr-note">QR кодыг банкны аппаараа уншуулна уу.</p>
+      <div class="banks" id="banks"></div>
+      <div class="waiting"><span class="pulse"></span><span id="wait-text">Төлбөр хүлээж байна…</span></div>
+      <button type="button" class="btn ghost" id="mock-pay" hidden>Туршилтын төлбөр хийх</button>
+      <button type="button" class="btn ghost" id="back">← Картаа засах</button>
+    </div>
+    <div class="preview-wrap">
+      <span class="preview-label">Таны карт</span>
+      <div id="pay-preview"></div>
+      <p class="note">Төлбөр баталгаажсаны дараа энэ карт хүлээн авагчид илгээх холбоостой болно.</p>
+    </div>
+  </section>
+
+  <section id="view-done" hidden aria-labelledby="done-title">
+    <div class="center-card">
+      <h2 id="done-title">Төлбөр баталгаажлаа</h2>
+      <div id="done-card"></div>
+      <div class="field">
+        <label for="share-link">Хүлээн авагчид илгээх холбоос</label>
+        <div class="linkrow">
+          <input type="text" id="share-link" readonly>
+          <button type="button" class="btn" id="copy">Хуулах</button>
+        </div>
+      </div>
+      <div class="share" id="share"></div>
+      <div class="status" id="done-status" role="status"></div>
+      <div><button type="button" class="btn ghost" id="again">Шинэ карт бичих</button></div>
+    </div>
+  </section>
+</main>
+<script src="/card.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
+
+public/card.html
+
+html
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Сэтгэлийн шуудан</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Comfortaa:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="center-card">
+    <span class="eyebrow">Сэтгэлийн шуудан</span>
+    <div id="card"><p class="note">Ачаалж байна…</p></div>
+    <div><a class="btn ghost" href="/">Өөрөө карт бичих</a></div>
+  </div>
+</main>
+<script src="/card.js"></script>
+<script src="/view.js"></script>
+</body>
+</html>
