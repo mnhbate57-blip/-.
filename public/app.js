@@ -200,6 +200,7 @@
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
       .then(function (r) {
         if (!r.ok) { setStatus('status', (r.body && r.body.error) || 'Алдаа гарлаа. Дахин оролдоно уу.', 'bad'); return; }
+        if (r.body.status === 'paid') { finish(r.body); return; }
         order = r.body;
         deadline = Date.now() + 30 * 60 * 1000;
         store('ss_order', order.id);
@@ -291,7 +292,18 @@
 
   fetch('/api/config').then(function (r) { return r.json(); }).then(function (c) {
     price = c.price;
-    $('price').textContent = money(price);
+    if (c.free) {
+      var pr = $('price');
+      pr.textContent = '';
+      var old = el('s', 'note', money(price));
+      old.style.marginRight = '10px';
+      pr.appendChild(old);
+      pr.appendChild(document.createTextNode('Үнэгүй'));
+      if (c.freeUntil) $('status').textContent = c.freeUntil + ' хүртэл үнэгүй.';
+      $('pay-btn').textContent = 'Үнэгүй илгээх';
+    } else {
+      $('price').textContent = money(price);
+    }
     $('mock-pay').hidden = !c.mock;
   }).catch(function () { $('price').textContent = ''; });
 
