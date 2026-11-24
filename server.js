@@ -68,6 +68,8 @@ function validateImages(list) {
   return out;
 }
 
+function isFree() { return config.freeUntil > 0 && Date.now() <= config.freeUntil; }
+
 /* ---------- small helpers ---------- */
 function send(res, status, body, headers) {
   const isJson = typeof body === 'object' && !Buffer.isBuffer(body);
@@ -189,7 +191,7 @@ async function handle(req, res) {
   const m = req.method;
 
   if (m === 'GET' && p === '/api/config') {
-    return send(res, 200, { price: config.price, mock: provider.name === 'mock' && !config.isProd });
+    return send(res, 200, { price: config.price, free: isFree(), freeUntil: isFree() ? config.freeUntilText : '', mock: provider.name === 'mock' && !config.isProd });
   }
 
   if (m === 'POST' && p === '/api/orders') {
@@ -210,6 +212,15 @@ async function handle(req, res) {
         console.error('image save failed', e.message);
         return send(res, 500, { error: 'Зураг хадгалж чадсангүй.' });
       }
+    }
+    if (isFree()) {
+      // Free promotion: no invoice, the card is ready at once. The price is still decided only here on the server.
+      const freeOrder = {
+        id: orderId, cardId, status: 'paid', amount: 0, card, images: images.length,
+        invoiceId: 'free', createdAt: Date.now(), paidAt: Date.now(), paidAmount: 0, lastCheck: 0
+      };
+      await store.put(freeOrder);
+      return send(res, 201, { id: orderId, status: 'paid', cardId, amount: 0 });
     }
     let invoice;
     try {
