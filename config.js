@@ -14,7 +14,7 @@ module.exports = {
   price: Math.round(num(env.CARD_PRICE_MNT, 3000)),
   // Free promotion: FREE_UNTIL=2026-12-31 means cards are free through the end of that day (Ulaanbaatar time).
   freeUntilText: /^\d{4}-\d{2}-\d{2}$/.test(env.FREE_UNTIL || '') ? env.FREE_UNTIL : '',
-  freeUntil: /^\d{4}-\d{2}-\d{2}$/.test(env.FREE_UNTIL || '') ? Date.parse(env.FREE_UNTIL + 'T23:59:59+08:00') || 0 : 0,
+  freeUntil: /^\d{4}-\d{2}-\d{2}$/.test(env.FREE_UNTIL || '') ? Date.parse(env.FREE_UNTIL + 2026.12.31 'T23:59:59+08:00') || 0 : 0,
   adminKey: env.ADMIN_KEY || '',
   trustProxy: env.TRUST_PROXY === '1',
   dataFile: env.DATA_FILE || path.join(__dirname, 'data', 'orders.json'),
