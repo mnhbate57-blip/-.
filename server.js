@@ -136,6 +136,16 @@ function rateLimited(ip, max, windowMs) {
 }
 setInterval(() => { const now = Date.now(); hits.forEach((arr, ip) => { if (!arr.some((t) => now - t < 3600e3)) hits.delete(ip); }); }, 600e3).unref();
 
+// Wrong admin keys are counted per IP so the key cannot be guessed by trying again and again.
+const adminFails = new Map();
+function adminBlocked(ip) {
+  const now = Date.now();
+  const arr = (adminFails.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000);
+  adminFails.set(ip, arr);
+  return arr.length >= 8;
+}
+function adminFailed(ip) { const arr = adminFails.get(ip) || []; arr.push(Date.now()); adminFails.set(ip, arr); }
+
 function safeEqual(a, b) {
   const ha = crypto.createHash('sha256').update(String(a)).digest();
   const hb = crypto.createHash('sha256').update(String(b)).digest();
@@ -311,8 +321,10 @@ async function handle(req, res) {
   }
 
   if (m === 'GET' && p === '/api/admin/orders') {
+    const ip = clientIp(req);
+    if (adminBlocked(ip)) return send(res, 429, { error: 'Too many attempts' });
     const key = req.headers['x-admin-key'];
-    if (!config.adminKey || typeof key !== 'string' || !safeEqual(key, config.adminKey)) return send(res, 401, { error: 'Unauthorized' });
+    if (!config.adminKey || typeof key !== 'string' || !safeEqual(key, config.adminKey)) { adminFailed(ip); return send(res, 401, { error: 'Unauthorized' }); }
     const rows = store.all().sort((a, b) => b.createdAt - a.createdAt).slice(0, 500).map((o) => ({
       id: o.id, status: o.status, amount: o.amount, paidAmount: o.paidAmount || 0,
       createdAt: o.createdAt, paidAt: o.paidAt || null, plan: o.card.plan || 'premium', to: o.card.to, from: o.card.from
@@ -323,6 +335,7 @@ async function handle(req, res) {
 
   if (m === 'GET' || m === 'HEAD') {
     if (p === '/') return serveStatic(res, 'index.html', req);
+    if (p === '/admin') return serveStatic(res, 'admin.html', req);
     if (/^\/c\/[a-f0-9]{32}$/.test(p)) return serveStatic(res, 'card.html', req);
     if (p.startsWith('/api/')) return send(res, 404, { error: 'Not found' });
     let rel;
