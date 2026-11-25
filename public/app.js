@@ -3,6 +3,7 @@
   var SC = window.SC, el = SC.el;
   var $ = function (id) { return document.getElementById(id); };
   var D = { type: 'love', c1: '', c2: '', ink: '', pattern: '', font: '', motif: '', align: '' };
+  var plan = 'free', cfg = { price: 0, free: false, freeUntil: '', mock: false };
   var customOpen = false, price = 0, order = null, pollTimer = null, deadline = 0, busy = false;
 
   function applyTemplate(key) {
@@ -165,7 +166,7 @@
   ['c1', 'c2', 'ink'].forEach(function (id) { $(id).addEventListener('input', function () { D[id] = $(id).value; renderPreview(); }); });
   ['to', 'from', 'message'].forEach(function (id) {
     $(id).addEventListener('input', function () {
-      if (id === 'message') $('count').textContent = $('message').value.length + '/600';
+      if (id === 'message') $('count').textContent = countText();
       renderPreview();
     });
   });
@@ -196,7 +197,7 @@
     busy = true;
     $('pay-btn').disabled = true;
     setStatus('status', 'Нэхэмжлэх үүсгэж байна…', '');
-    fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ card: d, images: pics.map(function (p) { return p.dataUrl; }) }) })
+    fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: plan, card: d, images: plan === 'premium' ? pics.map(function (p) { return p.dataUrl; }) : [] }) })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
       .then(function (r) {
         if (!r.ok) { setStatus('status', (r.body && r.body.error) || 'Алдаа гарлаа. Дахин оролдоно уу.', 'bad'); return; }
@@ -278,33 +279,77 @@
   });
   $('again').addEventListener('click', function () {
     order = null; store('ss_order', null);
-    $('to').value = ''; $('message').value = ''; $('count').textContent = '0/600';
+    $('to').value = ''; $('message').value = ''; $('count').textContent = countText();
     pics = []; renderPics();
     setStatus('status', '', '');
     renderPreview();
     show('view-compose');
   });
 
+  /* ---------- free / premium ---------- */
+  function maxLen() { return plan === 'premium' ? 600 : 300; }
+  function countText() { return $('message').value.length + '/' + maxLen(); }
+
+  function renderPlan() {
+    var premium = plan === 'premium';
+    $('plan-free').setAttribute('aria-checked', String(!premium));
+    $('plan-premium').setAttribute('aria-checked', String(premium));
+    $('advanced').hidden = !premium;
+    var msg = $('message');
+    msg.maxLength = maxLen();
+    if (msg.value.length > maxLen()) msg.value = msg.value.slice(0, maxLen());
+    $('count').textContent = countText();
+
+    var promo = !!cfg.free;
+    $('plan-premium-price').textContent = promo ? 'Үнэгүй' + (cfg.freeUntil ? ' (' + cfg.freeUntil + ' хүртэл)' : '') : money(cfg.price || price);
+
+    var pr = $('price');
+    pr.textContent = '';
+    var freeNow = !premium || promo;
+    if (!premium) {
+      pr.appendChild(document.createTextNode('Үнэгүй'));
+    } else if (promo) {
+      var old = el('s', 'note', money(cfg.price || price));
+      old.style.marginRight = '10px';
+      pr.appendChild(old);
+      pr.appendChild(document.createTextNode('Үнэгүй'));
+    } else {
+      pr.appendChild(document.createTextNode(money(cfg.price || price)));
+    }
+    $('pay-btn').textContent = freeNow ? 'Үнэгүй илгээх' : 'Төлбөр төлөх';
+    if (premium && promo && cfg.freeUntil) $('status').textContent = cfg.freeUntil + ' хүртэл үнэгүй.';
+    else if ($('status').textContent.indexOf('хүртэл үнэгүй') > -1) $('status').textContent = '';
+  }
+
+  function setPlan(next) {
+    if (plan === next) return;
+    plan = next;
+    if (plan === 'free') {
+      // The free plan uses the template's own look and no pictures.
+      applyTemplate(D.type);
+      syncColors();
+      pics = [];
+      renderPics();
+      customOpen = false;
+      renderControls();
+      renderPreview();
+    }
+    renderPlan();
+  }
+  $('plan-free').addEventListener('click', function () { setPlan('free'); });
+  $('plan-premium').addEventListener('click', function () { setPlan('premium'); });
+
   /* ---------- start ---------- */
   renderControls();
   syncColors();
   renderPreview();
+  renderPlan();
 
   fetch('/api/config').then(function (r) { return r.json(); }).then(function (c) {
+    cfg = c;
     price = c.price;
-    if (c.free) {
-      var pr = $('price');
-      pr.textContent = '';
-      var old = el('s', 'note', money(price));
-      old.style.marginRight = '10px';
-      pr.appendChild(old);
-      pr.appendChild(document.createTextNode('Үнэгүй'));
-      if (c.freeUntil) $('status').textContent = c.freeUntil + ' хүртэл үнэгүй.';
-      $('pay-btn').textContent = 'Үнэгүй илгээх';
-    } else {
-      $('price').textContent = money(price);
-    }
     $('mock-pay').hidden = !c.mock;
+    renderPlan();
   }).catch(function () { $('price').textContent = ''; });
 
   // If the buyer reloaded after paying, show the finished card again.
