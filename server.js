@@ -26,17 +26,36 @@ const PATTERNS = ['none', 'confetti', 'dots', 'stripes', 'waves', 'hearts', 'sta
 const FONTS = ['hand', 'serif', 'sans', 'round', 'bold'];
 const MOTIFS = ['none', 'heart', 'cake', 'envelope', 'star', 'flower', 'balloon', 'sun', 'moon', 'gift'];
 
-function validateCard(b) {
+// What the free plan gets: the template's own look. The server applies it, so the browser cannot ask for more.
+const FREE_STYLE = {
+  love:   { c: ['#8e1b4a', '#d6456f', '#fff3f7'], pattern: 'hearts',   font: 'hand',  motif: 'heart',    align: 'left' },
+  bday:   { c: ['#f2b134', '#f07a3c', '#3a1d05'], pattern: 'confetti', font: 'hand',  motif: 'cake',     align: 'left' },
+  letter: { c: ['#eaf0f9', '#d8e2f2', '#1d2b4a'], pattern: 'lines',    font: 'hand',  motif: 'envelope', align: 'left' },
+  cheers: { c: ['#1e6b52', '#3aa07d', '#effaf4'], pattern: 'stars',    font: 'round', motif: 'star',     align: 'center' },
+  thanks: { c: ['#5a3d8a', '#8f6fc7', '#f6f0ff'], pattern: 'dots',     font: 'serif', motif: 'flower',   align: 'center' },
+  night:  { c: ['#141a3a', '#3b3f8f', '#eef0ff'], pattern: 'stars',    font: 'serif', motif: 'moon',     align: 'center' },
+  sunny:  { c: ['#7a5a12', '#d9a93a', '#fff8e6'], pattern: 'waves',    font: 'bold',  motif: 'sun',      align: 'left' },
+  gift:   { c: ['#e2574c', '#f2955c', '#fff5f0'], pattern: 'stripes',  font: 'sans',  motif: 'gift',     align: 'center' }
+};
+const FREE_MESSAGE_MAX = 300;
+
+function validateCard(b, plan) {
   if (!b || typeof b !== 'object') return null;
   const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
   const to = str(b.to, 60);
   const from = str(b.from, 60) || 'Нэргүй';
-  const message = str(b.message, 600);
+  const message = str(b.message, plan === 'premium' ? 600 : FREE_MESSAGE_MAX);
   if (!to || !message) return null;
   const pick = (v, list, d) => (list.includes(v) ? v : d);
   const hex = (v, d) => (typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v) ? v : d);
+  const type = pick(b.type, TYPES, 'love');
+  if (plan !== 'premium') {
+    const f = FREE_STYLE[type];
+    return { plan: 'free', type, c1: f.c[0], c2: f.c[1], ink: f.c[2], pattern: f.pattern, font: f.font, motif: f.motif, align: f.align, to, from, message };
+  }
   return {
-    type: pick(b.type, TYPES, 'love'),
+    plan: 'premium',
+    type,
     c1: hex(b.c1, '#8e1b4a'),
     c2: hex(b.c2, '#d6456f'),
     ink: hex(b.ink, '#fff3f7'),
@@ -198,9 +217,10 @@ async function handle(req, res) {
     if (rateLimited(clientIp(req), 10, 10 * 60 * 1000)) return send(res, 429, { error: 'Хэт олон хүсэлт илгээлээ. Түр хүлээгээд дахин оролдоно уу.' });
     let body;
     try { body = await readJson(req, 2 * 1024 * 1024); } catch (e) { return send(res, e.status || 400, { error: 'Хүсэлт буруу эсвэл хэт том байна.' }); }
-    const card = validateCard(body && body.card);
+    const plan = body && body.plan === 'premium' ? 'premium' : 'free';
+    const card = validateCard(body && body.card, plan);
     if (!card) return send(res, 400, { error: 'Хэнд, зурвас хоёрыг заавал бичнэ үү.' });
-    const images = validateImages(body.images);
+    const images = plan === 'premium' ? validateImages(body.images) : [];
     if (!images) return send(res, 400, { error: 'Зураг буруу байна. 3 хүртэл JPG зураг оруулна уу.' });
     const orderId = crypto.randomBytes(12).toString('hex');
     const cardId = crypto.randomBytes(16).toString('hex');
@@ -213,8 +233,8 @@ async function handle(req, res) {
         return send(res, 500, { error: 'Зураг хадгалж чадсангүй.' });
       }
     }
-    if (isFree()) {
-      // Free promotion: no invoice, the card is ready at once. The price is still decided only here on the server.
+    if (plan === 'free' || isFree()) {
+      // Free plan, or a free promotion on premium: no invoice, the card is ready at once. The price is still decided only here on the server.
       const freeOrder = {
         id: orderId, cardId, status: 'paid', amount: 0, card, images: images.length,
         invoiceId: 'free', createdAt: Date.now(), paidAt: Date.now(), paidAmount: 0, lastCheck: 0
@@ -285,7 +305,7 @@ async function handle(req, res) {
     if (!config.adminKey || typeof key !== 'string' || !safeEqual(key, config.adminKey)) return send(res, 401, { error: 'Unauthorized' });
     const rows = store.all().sort((a, b) => b.createdAt - a.createdAt).slice(0, 500).map((o) => ({
       id: o.id, status: o.status, amount: o.amount, paidAmount: o.paidAmount || 0,
-      createdAt: o.createdAt, paidAt: o.paidAt || null, to: o.card.to, from: o.card.from
+      createdAt: o.createdAt, paidAt: o.paidAt || null, plan: o.card.plan || 'premium', to: o.card.to, from: o.card.from
     }));
     const revenue = rows.filter((r) => r.status === 'paid').reduce((s, r) => s + r.paidAmount, 0);
     return send(res, 200, { revenue, orders: rows });
