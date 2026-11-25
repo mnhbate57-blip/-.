@@ -60,6 +60,7 @@
 
   fetch('/api/cards/' + m[1]).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (card) {
     card.imageSrcs = SC.imageUrls(m[1], card.images);
-    envelope(card);
+    // Premium cards open like an envelope. Free cards (and plain older cards) show at once.
+    if (card.plan === 'premium') envelope(card); else showCard(card);
   }).catch(function () { fail('Мэндчилгээ олдсонгүй. Холбоосыг бүтнээр нь хуулсан эсэхээ шалгана уу.'); });
 })();
