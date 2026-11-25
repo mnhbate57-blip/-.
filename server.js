@@ -183,7 +183,7 @@ function publicOrder(order) {
 /* ---------- static files ---------- */
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon'
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.ico': 'image/x-icon'
 };
 const PUBLIC = path.join(__dirname, 'public');
 const SECURITY = {
@@ -192,13 +192,23 @@ const SECURITY = {
   'Referrer-Policy': 'no-referrer'
 };
 
-function serveStatic(res, rel) {
+// Public address used in share-preview tags. BASE_URL wins; otherwise the request's own host (validated).
+function originOf(req) {
+  if (process.env.BASE_URL) return config.baseUrl;
+  const host = String((req && req.headers.host) || '');
+  if (!/^[a-z0-9.-]+(:\d{1,5})?$/i.test(host)) return config.baseUrl;
+  const proto = config.trustProxy && req.headers['x-forwarded-proto'] === 'https' ? 'https' : (req.socket && req.socket.encrypted ? 'https' : 'http');
+  return proto + '://' + host;
+}
+
+function serveStatic(res, rel, req) {
   const file = path.normalize(path.join(PUBLIC, rel));
   if (file !== PUBLIC && !file.startsWith(PUBLIC + path.sep)) return send(res, 404, 'Not found');
   fs.readFile(file, (err, buf) => {
     if (err) return send(res, 404, 'Not found');
     const type = MIME[path.extname(file)] || 'application/octet-stream';
-    res.writeHead(200, Object.assign({ 'Content-Type': type, 'Cache-Control': type.startsWith('text/html') ? 'no-cache' : 'public, max-age=300' }, SECURITY));
+    if (type.startsWith('text/html')) buf = Buffer.from(buf.toString('utf8').replace(/__ORIGIN__/g, originOf(req)), 'utf8');
+    res.writeHead(200, Object.assign({ 'Content-Type': type, 'Cache-Control': /^(text\/html|text\/css|text\/javascript)/.test(type) ? 'no-cache' : 'public, max-age=300' }, SECURITY));
     res.end(buf);
   });
 }
@@ -311,13 +321,13 @@ async function handle(req, res) {
     return send(res, 200, { revenue, orders: rows });
   }
 
-  if (m === 'GET') {
-    if (p === '/') return serveStatic(res, 'index.html');
-    if (/^\/c\/[a-f0-9]{32}$/.test(p)) return serveStatic(res, 'card.html');
+  if (m === 'GET' || m === 'HEAD') {
+    if (p === '/') return serveStatic(res, 'index.html', req);
+    if (/^\/c\/[a-f0-9]{32}$/.test(p)) return serveStatic(res, 'card.html', req);
     if (p.startsWith('/api/')) return send(res, 404, { error: 'Not found' });
     let rel;
     try { rel = decodeURIComponent(p).replace(/^\/+/, ''); } catch (e) { return send(res, 400, 'Bad request'); }
-    return serveStatic(res, rel);
+    return serveStatic(res, rel, req);
   }
 
   return send(res, 405, { error: 'Method not allowed' });
