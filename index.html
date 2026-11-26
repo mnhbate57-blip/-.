@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сэтгэлийн шуудан</title>
+<meta name="description" content="Хайртай хүндээ хайрын үг, төрсөн өдрийн мэнд, баяр хүргэлийн захидал бичээд илгээ.">
+<meta property="og:title" content="Сэтгэлийн шуудан">
+<meta property="og:description" content="Хайртай хүндээ хайрын үг, төрсөн өдрийн мэнд, баяр хүргэлийн захидал бичээд илгээ.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="__ORIGIN__/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#b8325f">
+<meta property="og:site_name" content="Сэтгэлийн шуудан">
+<meta property="og:locale" content="mn_MN">
+<meta property="og:image" content="__ORIGIN__/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Сэтгэлийн шуудан">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="__ORIGIN__/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Comfortaa:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/box.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <span class="hero-orb o1" aria-hidden="true"></span>
+    <span class="hero-orb o2" aria-hidden="true"></span>
+    <span class="hero-orb o3" aria-hidden="true"></span>
+    <span class="hero-float f1" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48" fill="currentColor"><path d="M24 41S6 30 6 17.5C6 11 11 7 16 7c3.5 0 6.5 2 8 5 1.5-3 4.5-5 8-5 5 0 10 4 10 10.5C42 30 24 41 24 41z"/></svg></span>
+    <span class="hero-float f2" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48" fill="currentColor"><path d="M24 5l5.5 12 13 1.5-9.7 8.8 2.7 12.9L24 33.4 12.5 40.2l2.7-12.9L5.5 18.5l13-1.5z"/></svg></span>
+    <span class="hero-float f3" aria-hidden="true"><svg viewBox="0 0 48 48" width="48" height="48" fill="currentColor"><path d="M24 41S6 30 6 17.5C6 11 11 7 16 7c3.5 0 6.5 2 8 5 1.5-3 4.5-5 8-5 5 0 10 4 10 10.5C42 30 24 41 24 41z"/></svg></span>
+    <span class="eyebrow">Мэндчилгээ, захидал</span>
+    <h1>Сэтгэлийн шуудан</h1>
+    <p class="lede">Хайртай хүндээ хайрын үг, төрсөн өдрийн мэнд, баяр хүргэлийн захидал бичээд илгээ. Өнгө, загвар, үсгийн хэв маягаа өөрөө сонго.</p>
+    <ul class="hero-tags" aria-label="Боломжууд">
+      <li>Хайрын үг</li><li>Төрсөн өдөр</li><li>Баяр хүргэл</li><li>Захидал</li>
+    </ul>
+    <a class="btn hero-cta" href="#compose-title">Карт бичиж эхлэх</a>
+  </header>
+
+  <section class="panel box-promo" id="box-promo" aria-labelledby="box-title">
+    <h2 id="box-title">Өөрийн шуудангийн хайрцаг үүсгэх</h2>
+    <p class="note">Бүртгэл шаардахгүй. Нэрээ бичээд холбоос аваарай. Түүнийг стори, чат дээрээ тавихад хэн ч танд мэндчилгээ бичиж илгээнэ. Та дараа нь нууц холбоосоороо орж уншина.</p>
+    <form class="box-form" id="box-form" novalidate>
+      <input type="text" id="box-name" maxlength="40" placeholder="Таны нэр" autocomplete="nickname" aria-label="Таны нэр">
+      <button type="submit" class="btn" id="box-btn">Хайрцаг үүсгэх</button>
+    </form>
+    <div class="status" id="box-status" role="status"></div>
+    <div><a class="btn ghost" id="box-mine" href="#" hidden>Миний хайрцаг руу орох</a></div>
+  </section>
+
+  <section id="view-compose" class="compose" aria-labelledby="compose-title">
+    <form class="panel" id="form" novalidate>
+      <h2 id="compose-title">Мэндчилгээ бичих</h2>
+      <div class="plans" role="radiogroup" aria-label="Илгээх төрөл">
+        <button type="button" class="plan" id="plan-free" role="radio" aria-checked="true">
+          <span class="plan-name">Үнэгүй</span>
+          <span class="plan-price">0₮</span>
+          <span class="plan-desc">16 бэлэн загвар, 1 зураг, 1 видео, 300 тэмдэгт хүртэл. Төлбөргүй, шууд илгээнэ.</span>
+        </button>
+        <button type="button" class="plan" id="plan-premium" role="radio" aria-checked="false">
+          <span class="plan-name">Premium</span>
+          <span class="plan-price" id="plan-premium-price">…</span>
+          <span class="plan-desc">Өөрийн өнгө, хээ, үсгийн хэв, 3 зураг. Хүлээн авагчид дугтуйгаар нээгдэнэ.</span>
+        </button>
+      </div>
+      <div class="sub"><span class="legend" id="type-legend">Загвар</span><div class="opts" id="types" role="group" aria-labelledby="type-legend"></div></div>
+      <div class="row2">
+        <div class="field"><label for="to">Хэнд</label><input type="text" id="to" maxlength="60" placeholder="Хайртай найздаа" autocomplete="off"></div>
+        <div class="field"><label for="from">Хэнээс</label><input type="text" id="from" maxlength="60" placeholder="Таны нэр" autocomplete="nickname"></div>
+      </div>
+      <div class="field">
+        <label for="message">Зурвас</label>
+        <textarea id="message" maxlength="600" placeholder="Сэтгэлийнхээ үгийг энд бичээрэй…"></textarea>
+        <span class="count" id="count">0/600</span>
+      </div>
+      <div class="sub">
+        <span class="legend" id="pic-legend">Зураг (1 үнэгүй, Premium-д 3)</span>
+        <div><button type="button" class="btn ghost" id="add-img">Зураг нэмэх</button></div>
+        <input type="file" id="img-input" accept="image/*" multiple hidden>
+        <div class="picked" id="picked"></div>
+        <div class="note" id="media-note" role="status">Зургийг автоматаар жижигрүүлнэ.</div>
+        <span class="legend" id="vid-legend">Видео (1, 12MB хүртэл)</span>
+        <div><button type="button" class="btn ghost" id="add-vid">Видео нэмэх</button></div>
+        <input type="file" id="vid-input" accept="video/mp4,video/quicktime,video/webm,video/*" hidden>
+        <div class="picked" id="vid-picked"></div>
+      </div>
+      <div class="advanced" id="advanced" hidden>
+      <div class="sub">
+        <span class="legend" id="pal-legend">Өнгө</span>
+        <div class="swatches" id="palettes" role="group" aria-labelledby="pal-legend"></div>
+        <div class="custom-row" id="custom" hidden>
+          <label for="c1">Дээд <input type="color" id="c1" value="#8e1b4a"></label>
+          <label for="c2">Доод <input type="color" id="c2" value="#d6456f"></label>
+          <label for="ink">Үсэг <input type="color" id="ink" value="#fff3f7"></label>
+        </div>
+      </div>
+      <div class="sub"><span class="legend" id="pat-legend">Хээ</span><div class="opts" id="patterns" role="group" aria-labelledby="pat-legend"></div></div>
+      <div class="sub"><span class="legend" id="font-legend">Үсгийн хэв</span><div class="opts" id="fonts" role="group" aria-labelledby="font-legend"></div></div>
+      <div class="sub"><span class="legend" id="motif-legend">Зураг</span><div class="opts" id="motifs" role="group" aria-labelledby="motif-legend"></div></div>
+      <div class="sub"><span class="legend" id="align-legend">Байрлал</span><div class="opts" id="aligns" role="group" aria-labelledby="align-legend"></div></div>
+      </div>
+      <div class="status" id="status" role="status"></div>
+      <div class="actionbar">
+        <div class="price-line">
+          <span class="note">Картын үнэ</span>
+          <span class="price" id="price">…</span>
+        </div>
+        <button type="submit" class="btn" id="pay-btn">Төлбөр төлөх</button>
+      </div>
+    </form>
+    <div class="preview-wrap">
+      <span class="preview-label">Урьдчилан харах</span>
+      <div id="preview"></div>
+    </div>
+  </section>
+
+  <section id="view-pay" class="pay-grid" hidden aria-labelledby="pay-title">
+    <div class="panel qrbox">
+      <h2 id="pay-title">Төлбөр төлөх</h2>
+      <p class="price" id="pay-amount"></p>
+      <img id="qr" alt="QPay QR код" width="260" height="260">
+      <p class="note" id="qr-note">QR кодыг банкны аппаараа уншуулна уу.</p>
+      <div class="banks" id="banks"></div>
+      <div class="waiting"><span class="pulse"></span><span id="wait-text">Төлбөр хүлээж байна…</span></div>
+      <button type="button" class="btn ghost" id="mock-pay" hidden>Туршилтын төлбөр хийх</button>
+      <button type="button" class="btn ghost" id="back">← Картаа засах</button>
+    </div>
+    <div class="preview-wrap">
+      <span class="preview-label">Таны карт</span>
+      <div id="pay-preview"></div>
+      <p class="note">Төлбөр баталгаажсаны дараа энэ карт хүлээн авагчид илгээх холбоостой болно.</p>
+    </div>
+  </section>
+
+  <section id="view-done" hidden aria-labelledby="done-title">
+    <div class="center-card">
+      <h2 id="done-title">Төлбөр баталгаажлаа</h2>
+      <div id="done-card"></div>
+      <div class="field">
+        <label for="share-link">Хүлээн авагчид илгээх холбоос</label>
+        <div class="linkrow">
+          <input type="text" id="share-link" readonly>
+          <button type="button" class="btn" id="copy">Хуулах</button>
+        </div>
+      </div>
+      <div class="share" id="share"></div>
+      <div class="status" id="done-status" role="status"></div>
+      <div><button type="button" class="btn ghost" id="again">Шинэ карт бичих</button></div>
+    </div>
+  </section>
+</main>
+<script src="/card.js"></script>
+<script src="/app.js"></script>
+<script src="/start.js"></script>
+</body>
+</html>

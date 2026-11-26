@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Миний шуудангийн хайрцаг</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Comfortaa:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/box.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="mb-head">
+    <span class="eyebrow">Миний шуудангийн хайрцаг</span>
+    <h1 id="name">…</h1>
+    <p class="lede" id="lede">Доорх холбоосыг стори, чат дээрээ тавихад хэн ч танд мэндчилгээ илгээнэ.</p>
+  </header>
+
+  <section id="missing" class="panel empty" hidden>
+    <b>Хайрцаг олдсонгүй</b>
+    <span>Холбоосыг бүтнээр нь хуулсан эсэхээ шалгана уу.</span>
+    <div><a class="btn" href="/">Нүүр хуудас</a></div>
+  </section>
+
+  <div id="main" hidden>
+    <section class="panel share-panel" aria-labelledby="share-title">
+      <h2 id="share-title">Хуваалцах холбоос</h2>
+      <p class="note">Энэ холбоосоор орсон хүн бүр танд карт бичиж илгээж чадна. Бүртгэл шаардахгүй.</p>
+      <div class="linkbox">
+        <input type="text" id="pub-link" readonly aria-label="Хуваалцах холбоос">
+        <button type="button" class="btn" id="pub-copy">Хуулах</button>
+      </div>
+      <div class="share" id="share"></div>
+      <ol class="steps">
+        <li>Холбоосыг хуулна.</li>
+        <li>Instagram эсвэл Facebook story дээрээ "Link" наалт (sticker) нэмж, холбоосыг буулгана.</li>
+        <li>Доорх зургийг story-ийнхоо дэвсгэр болгож болно.</li>
+      </ol>
+      <div class="story-box">
+        <img id="story-img" alt="Story зураг" hidden>
+        <div class="col">
+          <button type="button" class="btn ghost" id="story-make">Story зураг бэлтгэх</button>
+          <a class="btn" id="story-dl" download="setgeliin-shuudan-story.png" hidden>Зургийг татах</a>
+          <span class="note" id="story-note"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel share-panel" aria-labelledby="key-title">
+      <h2 id="key-title">Таны нууц холбоос</h2>
+      <div class="warn">Энэ холбоос нь таны хайрцгийн түлхүүр. Зөвхөн та ашиглана, хэнд ч бүү өг. Алдвал ирсэн картуудаа дахин харах боломжгүй тул хаа нэгтээ хадгалаарай.</div>
+      <div class="linkbox">
+        <input type="text" id="key-link" readonly aria-label="Нууц холбоос">
+        <button type="button" class="btn ghost" id="key-copy">Хуулах</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="inbox-title">
+      <div class="inbox-top">
+        <h2 id="inbox-title">Ирсэн мэндчилгээ <span class="note" id="count"></span></h2>
+        <button type="button" class="btn ghost" id="refresh">Шинэчлэх</button>
+      </div>
+      <div class="status" id="status" role="status"></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="empty" id="empty" hidden>
+        <b>Одоохондоо мэндчилгээ ирээгүй байна</b>
+        <span>Холбоосоо стори дээрээ тавиад хүлээгээрэй.</span>
+      </div>
+    </section>
+
+    <div><a class="btn ghost" href="/">Өөрөө карт бичих</a></div>
+  </div>
+</main>
+<script src="/card.js"></script>
+<script src="/inbox.js"></script>
+</body>
+</html>

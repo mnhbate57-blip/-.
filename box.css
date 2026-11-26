@@ -1,0 +1,26 @@
+/* Mailbox pages: create box (home), send a card to a box, read the inbox */
+.box-promo { gap: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, var(--surface)), var(--surface)); }
+.box-promo h2 { font-size: 1.35rem; }
+.box-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.box-form input { flex: 1; min-width: 200px; }
+.mb-head { display: flex; flex-direction: column; gap: 6px; }
+.mb-head h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); overflow-wrap: anywhere; }
+.mb-head .lede { margin: 0; }
+.share-panel { gap: 14px; }
+.linkbox { display: flex; gap: 8px; flex-wrap: wrap; }
+.linkbox input { flex: 1; min-width: 200px; }
+.warn { border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--line)); background: color-mix(in srgb, var(--danger) 7%, var(--surface)); border-radius: 12px; padding: 12px 14px; font-size: .9rem; }
+.steps { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; font-size: .92rem; color: var(--muted); }
+.story-box { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.story-box img { width: 150px; max-width: 40%; border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 8px 22px rgba(0,0,0,.15); }
+.story-box .col { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 180px; }
+.inbox-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.msgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.msg-item { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.msg-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .82rem; color: var(--muted); }
+.badge-new { background: var(--accent); color: var(--accent-fg); font-weight: 800; font-size: .72rem; padding: 2px 9px; border-radius: 999px; }
+.empty { text-align: center; padding: 28px 12px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+.empty b { font-family: var(--font-display); font-size: 1.2rem; color: var(--fg); }
+.sent { text-align: center; align-items: center; }
+.sent .card { text-align: left; width: 100%; }
+.sent-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
