@@ -513,6 +513,13 @@ async function handle(req, res) {
     return send(res, 200, { revenue, orders: rows, mailboxes: boxes });
   }
 
+  if ((m === 'GET' || m === 'HEAD') && p === '/robots.txt') {
+    return send(res, 200, 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /inbox/\nDisallow: /c/\nDisallow: /m/\nDisallow: /api/\nSitemap: ' + originOf(req) + '/sitemap.xml\n', { 'Cache-Control': 'public, max-age=3600' });
+  }
+  if ((m === 'GET' || m === 'HEAD') && p === '/sitemap.xml') {
+    return send(res, 200, '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' + originOf(req) + '/</loc></url></urlset>\n', { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' });
+  }
+
   if (m === 'GET' || m === 'HEAD') {
     if (p === '/') return serveStatic(res, 'index.html', req);
     if ((mm = /^\/m\/([a-f0-9]{12})$/.exec(p))) {
