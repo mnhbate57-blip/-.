@@ -34,6 +34,13 @@ function createStore(file) {
       orders[order.id] = order;
       byCard[order.cardId] = order.id;
       return persist();
+    },
+    remove(id) {
+      const o = orders[id];
+      if (!o) return Promise.resolve();
+      delete byCard[o.cardId];
+      delete orders[id];
+      return persist();
     }
   };
 }
