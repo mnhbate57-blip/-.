@@ -62,12 +62,12 @@
         <button type="button" class="plan" id="plan-free" role="radio" aria-checked="true">
           <span class="plan-name">Үнэгүй</span>
           <span class="plan-price">0₮</span>
-          <span class="plan-desc">8 бэлэн загвар, 300 тэмдэгт хүртэл. Төлбөргүй, шууд илгээнэ.</span>
+          <span class="plan-desc">16 бэлэн загвар, 1 зураг, 1 видео, 300 тэмдэгт хүртэл. Төлбөргүй, шууд илгээнэ.</span>
         </button>
         <button type="button" class="plan" id="plan-premium" role="radio" aria-checked="false">
           <span class="plan-name">Premium</span>
           <span class="plan-price" id="plan-premium-price">…</span>
-          <span class="plan-desc">Бүх өнгө, хээ, үсгийн хэв, 3 зураг. Хүлээн авагчид дугтуйгаар нээгдэнэ.</span>
+          <span class="plan-desc">Өөрийн өнгө, хээ, үсгийн хэв, 3 зураг. Хүлээн авагчид дугтуйгаар нээгдэнэ.</span>
         </button>
       </div>
       <div class="sub"><span class="legend" id="type-legend">Загвар</span><div class="opts" id="types" role="group" aria-labelledby="type-legend"></div></div>
@@ -79,6 +79,17 @@
         <label for="message">Зурвас</label>
         <textarea id="message" maxlength="600" placeholder="Сэтгэлийнхээ үгийг энд бичээрэй…"></textarea>
         <span class="count" id="count">0/600</span>
+      </div>
+      <div class="sub">
+        <span class="legend" id="pic-legend">Зураг (1 үнэгүй, Premium-д 3)</span>
+        <div><button type="button" class="btn ghost" id="add-img">Зураг нэмэх</button></div>
+        <input type="file" id="img-input" accept="image/*" multiple hidden>
+        <div class="picked" id="picked"></div>
+        <div class="note" id="media-note" role="status">Зургийг автоматаар жижигрүүлнэ.</div>
+        <span class="legend" id="vid-legend">Видео (1, 12MB хүртэл)</span>
+        <div><button type="button" class="btn ghost" id="add-vid">Видео нэмэх</button></div>
+        <input type="file" id="vid-input" accept="video/mp4,video/quicktime,video/webm,video/*" hidden>
+        <div class="picked" id="vid-picked"></div>
       </div>
       <div class="advanced" id="advanced" hidden>
       <div class="sub">
@@ -94,13 +105,6 @@
       <div class="sub"><span class="legend" id="font-legend">Үсгийн хэв</span><div class="opts" id="fonts" role="group" aria-labelledby="font-legend"></div></div>
       <div class="sub"><span class="legend" id="motif-legend">Зураг</span><div class="opts" id="motifs" role="group" aria-labelledby="motif-legend"></div></div>
       <div class="sub"><span class="legend" id="align-legend">Байрлал</span><div class="opts" id="aligns" role="group" aria-labelledby="align-legend"></div></div>
-      <div class="sub">
-        <span class="legend">Зураг (3 хүртэл)</span>
-        <div><button type="button" class="btn ghost" id="add-img">Зураг нэмэх</button></div>
-        <input type="file" id="img-input" accept="image/*" multiple hidden>
-        <div class="picked" id="picked"></div>
-        <div class="note" id="media-note" role="status">Зургийг автоматаар жижигрүүлнэ.</div>
-      </div>
       </div>
       <div class="status" id="status" role="status"></div>
       <div class="actionbar">
