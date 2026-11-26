@@ -1,0 +1,79 @@
+(function () {
+  'use strict';
+  var SC = window.SC, el = SC.el;
+  var $ = function (id) { return document.getElementById(id); };
+  var m = /^\/m\/([a-f0-9]{12})$/.exec(location.pathname);
+  var type = 'love', owner = '', busy = false;
+
+  function look() {
+    var t = SC.TEMPLATES[type], p = SC.PALETTES[t.pal].c;
+    return { type: type, c1: p[0], c2: p[1], ink: p[2], pattern: t.pattern, font: t.font, motif: t.motif, align: t.align };
+  }
+  function draft() { return { from: $('from').value.trim(), message: $('message').value.trim() }; }
+  function setStatus(msg, kind) { var s = $('status'); s.textContent = msg; s.className = 'status' + (kind ? ' ' + kind : ''); }
+  function show(id) { ['view-compose', 'view-sent', 'view-missing'].forEach(function (v) { $(v).hidden = v !== id; }); window.scrollTo(0, 0); }
+
+  function renderPreview() {
+    var d = draft(), ghost = !d.message;
+    var c = Object.assign(look(), {
+      to: owner, from: d.from || 'Таны нэр',
+      message: d.message || 'Чамд баяр баясгалан, эрүүл энх, үргэлж инээмсэглэл хүсье.',
+      createdAt: Date.now()
+    });
+    var box = $('preview'); box.textContent = '';
+    box.appendChild(SC.buildCard(c, ghost));
+  }
+
+  function renderTypes() {
+    var box = $('types'); box.textContent = '';
+    SC.TEMPLATE_ORDER.forEach(function (k) {
+      var p = SC.PALETTES[SC.TEMPLATES[k].pal].c;
+      var b = el('button', 'opt'); b.type = 'button';
+      b.setAttribute('aria-pressed', String(type === k));
+      var dot = el('span', 'dot'); dot.style.background = 'linear-gradient(150deg,' + p[0] + ',' + p[1] + ')';
+      b.appendChild(dot); b.appendChild(el('span', '', SC.TEMPLATES[k].label));
+      b.addEventListener('click', function () { type = k; renderTypes(); renderPreview(); });
+      box.appendChild(b);
+    });
+  }
+
+  if (!m) { show('view-missing'); return; }
+
+  fetch('/api/mailboxes/' + m[1]).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (b) {
+    owner = b.name;
+    $('title').textContent = owner + '-д мэндчилгээ илгээ';
+    renderTypes(); renderPreview();
+    show('view-compose');
+  }).catch(function () { $('hero').hidden = true; show('view-missing'); });
+
+  ['from', 'message'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      if (id === 'message') $('count').textContent = $('message').value.length + '/300';
+      renderPreview();
+    });
+  });
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var d = draft();
+    if (!d.message) { setStatus('Зурвасаа бичнэ үү.', 'bad'); $('message').focus(); return; }
+    if (busy) return;
+    busy = true; $('send-btn').disabled = true; setStatus('Илгээж байна…', '');
+    fetch('/api/mailboxes/' + m[1] + '/cards', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ card: Object.assign(look(), d) })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); }).then(function (r) {
+      if (!r.ok) { setStatus((r.body && r.body.error) || 'Алдаа гарлаа. Дахин оролдоно уу.', 'bad'); return; }
+      $('sent-note').textContent = owner + ' таны мэндчилгээг дараа нь уншина.';
+      var box = $('sent-card'); box.textContent = '';
+      box.appendChild(SC.buildCard(Object.assign(look(), { to: owner, from: d.from || 'Нэргүй', message: d.message, createdAt: Date.now() })));
+      show('view-sent');
+    }).catch(function () { setStatus('Сервертэй холбогдож чадсангүй.', 'bad'); })
+      .then(function () { busy = false; $('send-btn').disabled = false; });
+  });
+
+  $('again').addEventListener('click', function () {
+    $('message').value = ''; $('count').textContent = '0/300'; setStatus('', '');
+    renderPreview(); show('view-compose');
+  });
+})();
