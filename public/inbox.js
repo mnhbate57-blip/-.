@@ -112,7 +112,7 @@
       });
       meta.appendChild(del);
       item.appendChild(meta);
-      item.appendChild(SC.buildCard(msg));
+      item.appendChild(SC.buildCard(Object.assign({}, msg, { imageSrcs: SC.imageUrls(msg.cardId, msg.images), videoSrc: SC.videoUrl(msg.cardId, msg.video) })));
       list.appendChild(item);
       if (msg.createdAt > newest) newest = msg.createdAt;
     });
