@@ -1,4 +1,4 @@
-/* Shared card catalogue and renderer. Used by the compose page and the card view page. */
+/* Shared card catalogue and renderer. Used by the compose page, the mailbox pages and the card view page. */
 (function (g) {
   'use strict';
   var MOTIFS = {
@@ -11,11 +11,19 @@
     balloon: { n: 'Бөмбөлөг', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><ellipse cx="24" cy="19" rx="12" ry="15"/><path d="M24 34l-3 5h6z"/><path d="M24 39c-4 3 4 5 0 8" fill="none" stroke="currentColor" stroke-width="2"/></svg>' },
     sun: { n: 'Нар', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><circle cx="24" cy="24" r="9"/><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M24 4v6M24 38v6M4 24h6M38 24h6M10 10l4 4M34 34l4 4M38 10l-4 4M14 34l-4 4"/></g></svg>' },
     moon: { n: 'Сар', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><path d="M33 6a19 19 0 1 0 9 31A16 16 0 0 1 33 6z"/></svg>' },
-    gift: { n: 'Бэлэг', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><rect x="7" y="20" width="34" height="21" rx="2"/><rect x="5" y="14" width="38" height="8" rx="2" opacity=".6"/><rect x="22" y="14" width="4" height="27" fill="#fff" opacity=".5"/><path d="M24 14c-4-9-12-8-10-3 1 3 6 3 10 3zM24 14c4-9 12-8 10-3-1 3-6 3-10 3z" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>' }
+    gift: { n: 'Бэлэг', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><rect x="7" y="20" width="34" height="21" rx="2"/><rect x="5" y="14" width="38" height="8" rx="2" opacity=".6"/><rect x="22" y="14" width="4" height="27" fill="#fff" opacity=".5"/><path d="M24 14c-4-9-12-8-10-3 1 3 6 3 10 3zM24 14c4-9 12-8 10-3-1 3-6 3-10 3z" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>' },
+    ring: { n: 'Бөгж', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><circle cx="18" cy="31" r="10" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="31" cy="31" r="10" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M24 4l5 6-5 7-5-7z"/></svg>' },
+    cap: { n: 'Төгсөлт', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><path d="M24 8L3 18l21 10 21-10z"/><path d="M12 25v9c0 3 6 6 12 6s12-3 12-6v-9l-12 6z" opacity=".7"/><rect x="42" y="19" width="2.5" height="14" rx="1"/></svg>' },
+    snow: { n: 'Цасан ширхэг', svg: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M24 4v40M6.7 14l34.6 20M6.7 34l34.6-20"/><path d="M19 8l5 4 5-4M19 40l5-4 5 4"/></svg>' },
+    firework: { n: 'Салют', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M24 4v9M24 35v9M4 24h9M35 24h9M10 10l6 6M32 32l6 6M38 10l-6 6M16 32l-6 6"/></g><circle cx="24" cy="24" r="4"/></svg>' },
+    butterfly: { n: 'Эрвээхэй', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><path d="M24 24C14 8 3 12 6 24c2 8 12 8 18 0z"/><path d="M24 24c10-16 21-12 18 0-2 8-12 8-18 0z"/><path d="M24 24c-8 2-12 14-6 18 4 2 8-6 6-18z" opacity=".75"/><path d="M24 24c8 2 12 14 6 18-4 2-8-6-6-18z" opacity=".75"/></svg>' },
+    ger: { n: 'Гэр', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><path d="M24 5L5 22h38z"/><rect x="8" y="22" width="32" height="18"/><rect x="20" y="28" width="8" height="12" rx="4" fill="#fff" opacity=".85"/></svg>' },
+    bell: { n: 'Хонх', svg: '<svg viewBox="0 0 48 48" fill="currentColor"><path d="M24 5c-8 0-12 6-12 14v8l-4 5h32l-4-5v-8c0-8-4-14-12-14z"/><circle cx="24" cy="41" r="4"/></svg>' },
+    rainbow: { n: 'Солонго', svg: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M5 38a19 19 0 0 1 38 0"/><path d="M12 38a12 12 0 0 1 24 0" opacity=".75"/><path d="M19 38a5 5 0 0 1 10 0" opacity=".5"/></svg>' }
   };
-  var MOTIF_ORDER = ['heart', 'cake', 'envelope', 'star', 'flower', 'balloon', 'sun', 'moon', 'gift', 'none'];
-  var PATTERNS = { none: 'Хээгүй', confetti: 'Цацраг', dots: 'Цэг', stripes: 'Судал', waves: 'Долгион', hearts: 'Зүрхэн хээ', stars: 'Одон хээ', lines: 'Дэвтрийн шугам' };
-  var PATTERN_ORDER = ['none', 'confetti', 'dots', 'stripes', 'waves', 'hearts', 'stars', 'lines'];
+  var MOTIF_ORDER = ['heart', 'cake', 'envelope', 'star', 'flower', 'balloon', 'sun', 'moon', 'gift', 'ring', 'cap', 'snow', 'firework', 'butterfly', 'ger', 'bell', 'rainbow', 'none'];
+  var PATTERNS = { none: 'Хээгүй', confetti: 'Цацраг', dots: 'Цэг', stripes: 'Судал', waves: 'Долгион', hearts: 'Зүрхэн хээ', stars: 'Одон хээ', lines: 'Дэвтрийн шугам', snow: 'Цасан хээ', sparkle: 'Гялбаа', flowers: 'Цэцэгт хээ' };
+  var PATTERN_ORDER = ['none', 'confetti', 'dots', 'stripes', 'waves', 'hearts', 'stars', 'lines', 'snow', 'sparkle', 'flowers'];
   var FONTS = { hand: 'Гар бичмэл', serif: 'Сонгодог', sans: 'Энгийн', round: 'Дугуй', bold: 'Тод' };
   var FONT_ORDER = ['hand', 'serif', 'sans', 'round', 'bold'];
   var PALETTES = [
@@ -25,20 +33,59 @@
     { n: 'Шөнө', c: ['#141a3a', '#3b3f8f', '#eef0ff'] }, { n: 'Алт', c: ['#7a5a12', '#d9a93a', '#fff8e6'] },
     { n: 'Гүргэм', c: ['#bfe8d8', '#8fd3bd', '#10382e'] }, { n: 'Тэнгэр', c: ['#d6e8fb', '#a9cdf3', '#122a47'] },
     { n: 'Шүр', c: ['#e2574c', '#f2955c', '#fff5f0'] }, { n: 'Цаас', c: ['#eaf0f9', '#d8e2f2', '#1d2b4a'] },
-    { n: 'Хар', c: ['#1f1f24', '#4a4a55', '#f5f5f7'] }
+    { n: 'Хар', c: ['#1f1f24', '#4a4a55', '#f5f5f7'] },
+    { n: 'Цагаан сар', c: ['#14367a', '#2f64c4', '#fff8e1'] }, { n: 'Салют', c: ['#0c1b3f', '#7a2fb5', '#fff2c2'] },
+    { n: 'Хурим', c: ['#f1d9c9', '#e3b09a', '#4d2424'] }, { n: 'Төгсөлт', c: ['#13294b', '#2c5aa0', '#ffe9a8'] },
+    { n: 'Ээж', c: ['#d9508a', '#f59ac0', '#fff5fa'] }, { n: 'Найз', c: ['#2aa198', '#86d9b0', '#052f2b'] },
+    { n: 'Эдгэрэлт', c: ['#6ec1e4', '#bfe6a3', '#0d3446'] }, { n: 'Нялх', c: ['#bfe3ff', '#ffd6e8', '#274060'] }
   ];
+  // scene: six decorations that float behind the text (matched to the template's own motif)
   var TEMPLATES = {
-    love: { label: 'Хайрын мэндчилгээ', pal: 0, pattern: 'hearts', font: 'hand', motif: 'heart', align: 'left' },
-    bday: { label: 'Төрсөн өдөр', pal: 1, pattern: 'confetti', font: 'hand', motif: 'cake', align: 'left' },
-    letter: { label: 'Захидал', pal: 11, pattern: 'lines', font: 'hand', motif: 'envelope', align: 'left' },
-    cheers: { label: 'Баяр хүргэе', pal: 3, pattern: 'stars', font: 'round', motif: 'star', align: 'center' },
-    thanks: { label: 'Талархал', pal: 4, pattern: 'dots', font: 'serif', motif: 'flower', align: 'center' },
-    night: { label: 'Шөнийн мэнд', pal: 6, pattern: 'stars', font: 'serif', motif: 'moon', align: 'center' },
-    sunny: { label: 'Нартай мэнд', pal: 7, pattern: 'waves', font: 'bold', motif: 'sun', align: 'left' },
-    gift: { label: 'Бэлгийн карт', pal: 10, pattern: 'stripes', font: 'sans', motif: 'gift', align: 'center' }
+    love: { label: 'Хайрын мэндчилгээ', pal: 0, pattern: 'hearts', font: 'hand', motif: 'heart', align: 'left', scene: ['heart', 'heart', 'heart', 'star', 'heart', 'heart'] },
+    bday: { label: 'Төрсөн өдөр', pal: 1, pattern: 'confetti', font: 'hand', motif: 'cake', align: 'left', scene: ['balloon', 'star', 'balloon', 'gift', 'star', 'balloon'] },
+    letter: { label: 'Захидал', pal: 11, pattern: 'lines', font: 'hand', motif: 'envelope', align: 'left', scene: ['envelope', 'heart', 'envelope', 'star', 'heart', 'envelope'] },
+    cheers: { label: 'Баяр хүргэе', pal: 3, pattern: 'stars', font: 'round', motif: 'star', align: 'center', scene: ['star', 'firework', 'star', 'star', 'firework', 'star'] },
+    thanks: { label: 'Талархал', pal: 4, pattern: 'dots', font: 'serif', motif: 'flower', align: 'center', scene: ['flower', 'heart', 'flower', 'butterfly', 'flower', 'heart'] },
+    night: { label: 'Шөнийн мэнд', pal: 6, pattern: 'stars', font: 'serif', motif: 'moon', align: 'center', scene: ['moon', 'star', 'star', 'star', 'star', 'star'] },
+    sunny: { label: 'Нартай мэнд', pal: 7, pattern: 'waves', font: 'bold', motif: 'sun', align: 'left', scene: ['sun', 'rainbow', 'butterfly', 'sun', 'flower', 'sun'] },
+    gift: { label: 'Бэлгийн карт', pal: 10, pattern: 'stripes', font: 'sans', motif: 'gift', align: 'center', scene: ['gift', 'star', 'gift', 'heart', 'star', 'gift'] },
+    tsagaan: { label: 'Цагаан сар', pal: 13, pattern: 'sparkle', font: 'serif', motif: 'ger', align: 'center', scene: ['ger', 'sun', 'star', 'ger', 'star', 'sun'] },
+    newyear: { label: 'Шинэ жил', pal: 14, pattern: 'snow', font: 'round', motif: 'firework', align: 'center', scene: ['firework', 'star', 'bell', 'firework', 'star', 'snow'] },
+    wedding: { label: 'Хуримын мэнд', pal: 15, pattern: 'flowers', font: 'serif', motif: 'ring', align: 'center', scene: ['ring', 'heart', 'flower', 'heart', 'ring', 'flower'] },
+    graduation: { label: 'Төгсөлтийн баяр', pal: 16, pattern: 'stars', font: 'bold', motif: 'cap', align: 'center', scene: ['cap', 'star', 'cap', 'star', 'firework', 'star'] },
+    mother: { label: 'Ээж, эмэгтэйчүүдэд', pal: 17, pattern: 'flowers', font: 'hand', motif: 'flower', align: 'left', scene: ['flower', 'heart', 'flower', 'butterfly', 'heart', 'flower'] },
+    friend: { label: 'Найзын мэнд', pal: 18, pattern: 'confetti', font: 'round', motif: 'rainbow', align: 'center', scene: ['rainbow', 'star', 'heart', 'butterfly', 'star', 'sun'] },
+    getwell: { label: 'Эдгэрэлт хүсье', pal: 19, pattern: 'dots', font: 'hand', motif: 'butterfly', align: 'left', scene: ['butterfly', 'flower', 'sun', 'heart', 'butterfly', 'star'] },
+    baby: { label: 'Шинэ хүүхэд', pal: 20, pattern: 'dots', font: 'round', motif: 'balloon', align: 'center', scene: ['balloon', 'star', 'heart', 'balloon', 'star', 'bell'] }
   };
-  var TEMPLATE_ORDER = ['love', 'bday', 'letter', 'cheers', 'thanks', 'night', 'sunny', 'gift'];
+  var TEMPLATE_ORDER = ['love', 'bday', 'letter', 'cheers', 'thanks', 'night', 'sunny', 'gift', 'tsagaan', 'newyear', 'wedding', 'graduation', 'mother', 'friend', 'getwell', 'baby'];
   var HEX = /^#[0-9a-fA-F]{6}$/;
+  var SLOTS = [
+    { x: 76, y: 4, s: 64, r: 14, o: .22 }, { x: 3, y: 60, s: 50, r: -12, o: .18 }, { x: 86, y: 56, s: 40, r: 10, o: .18 },
+    { x: 48, y: 86, s: 36, r: -8, o: .15 }, { x: 60, y: 28, s: 30, r: 20, o: .13 }, { x: -1, y: 16, s: 34, r: -16, o: .15 }
+  ];
+
+  // Styles for the card extras live here so every page that shows a card gets them with this one file.
+  (function () {
+    if (!g.document || g.document.getElementById('sc-style')) return;
+    var css = '' +
+      '.card{isolation:isolate}' +
+      '.card>*{position:relative;z-index:1}' +
+      '.card>.scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}' +
+      '.scene .sc{position:absolute;display:block}' +
+      '.scene .sc svg{width:100%;height:100%;display:block}' +
+      '@media (prefers-reduced-motion:no-preference){.scene .sc{animation:scFloat 8s ease-in-out infinite}}' +
+      '@keyframes scFloat{0%,100%{translate:0 0}50%{translate:0 -9px}}' +
+      '.card .card-video{display:block;width:100%;max-height:340px;background:#000;border:5px solid #fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.25);box-sizing:border-box}' +
+      '.card .media-imgs{gap:10px;padding:4px 2px}' +
+      '.card .media-imgs img{border:5px solid #fff;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.25)}' +
+      '.card .media-imgs img:nth-child(odd){transform:rotate(-1.4deg)}' +
+      '.card .media-imgs img:nth-child(even){transform:rotate(1.2deg)}';
+    var st = g.document.createElement('style');
+    st.id = 'sc-style';
+    st.textContent = css;
+    g.document.head.appendChild(st);
+  })();
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -68,6 +115,7 @@
     var mix = function (pct) { return 'color-mix(in srgb, currentColor ' + pct + '%, transparent)'; };
     var img = [], size = [];
     function svgUrl(svg) { return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")'; }
+    var head = "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'>";
     if (p === 'confetti') {
       img.push('radial-gradient(circle at 18% 78%,' + mix(18) + ' 0 5px,transparent 6px)');
       img.push('radial-gradient(circle at 82% 62%,' + mix(14) + ' 0 7px,transparent 8px)');
@@ -85,8 +133,37 @@
       img.push(svgUrl("<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><path d='M28 42S12 32 12 21c0-5 4-9 8-9 3 0 6 2 8 5 2-3 5-5 8-5 4 0 8 4 8 9 0 11-16 21-16 21z' fill='" + ink + "' fill-opacity='.13'/></svg>")); size.push('56px 56px');
     } else if (p === 'stars') {
       img.push(svgUrl("<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><path d='M30 10l4 9 10 1-7.5 6.6 2.3 9.8L30 31l-8.8 5.4 2.3-9.8L16 20l10-1z' fill='" + ink + "' fill-opacity='.14'/></svg>")); size.push('60px 60px');
+    } else if (p === 'snow') {
+      img.push(svgUrl(head + "<g stroke='" + ink + "' stroke-opacity='.17' stroke-width='1.6' stroke-linecap='round'><path d='M16 8v14M9 15h14M11 10l10 10M21 10L11 20'/></g><circle cx='46' cy='44' r='2.6' fill='" + ink + "' fill-opacity='.15'/><circle cx='52' cy='14' r='1.8' fill='" + ink + "' fill-opacity='.13'/><circle cx='30' cy='52' r='1.6' fill='" + ink + "' fill-opacity='.12'/></svg>")); size.push('64px 64px');
+    } else if (p === 'sparkle') {
+      img.push(svgUrl(head + "<path d='M16 5c1 7 2 8 9 9-7 1-8 2-9 9-1-7-2-8-9-9 7-1 8-2 9-9z' fill='" + ink + "' fill-opacity='.17'/><path d='M46 38c.7 4 1.3 4.7 5 5.3-3.700.6-4.300 1.300-5 5.300-.7-4-1.300-4.700-5-5.300 3.700-.6 4.300-1.300 5-5.300z' fill='" + ink + "' fill-opacity='.17'/></svg>")); size.push('64px 64px');
+    } else if (p === 'flowers') {
+      var fl = "<g fill='" + ink + "' fill-opacity='.14'><circle cx='16' cy='9' r='4'/><circle cx='23' cy='14' r='4'/><circle cx='20' cy='22' r='4'/><circle cx='12' cy='22' r='4'/><circle cx='9' cy='14' r='4'/></g><circle cx='16' cy='16' r='2.6' fill='" + ink + "' fill-opacity='.22'/>";
+      img.push(svgUrl(head + fl + "<g transform='translate(30 32)'>" + fl + '</g></svg>')); size.push('64px 64px');
     }
     return { img: img, size: size };
+  }
+
+  var scenes = 0;
+  function buildScene(d, t) {
+    var keys = d.motif === t.motif && t.scene ? t.scene : [d.motif, d.motif, d.motif, 'star', 'heart', d.motif];
+    var wrap = el('div', 'scene');
+    wrap.setAttribute('aria-hidden', 'true');
+    SLOTS.forEach(function (s, i) {
+      var k = keys[i % keys.length];
+      if (!MOTIFS[k] || !MOTIFS[k].svg) return;
+      var sp = el('span', 'sc');
+      sp.innerHTML = MOTIFS[k].svg;
+      sp.style.left = s.x + '%'; sp.style.top = s.y + '%';
+      sp.style.width = s.s + 'px'; sp.style.height = s.s + 'px';
+      sp.style.opacity = String(s.o);
+      sp.style.transform = 'rotate(' + s.r + 'deg)';
+      sp.style.animationDuration = (6 + ((scenes + i) % 5)) + 's';
+      sp.style.animationDelay = '-' + ((scenes * 3 + i * 2) % 9) + 's';
+      wrap.appendChild(sp);
+    });
+    scenes++;
+    return wrap;
   }
 
   function buildCard(c, ghost) {
@@ -94,10 +171,12 @@
     var t = TEMPLATES[d.type];
     var card = el('article', 'card f-' + d.font + ' a-' + d.align + (d.pattern === 'lines' ? ' p-lines' : '') + (ghost ? ' ghosted' : ''));
     var pl = patternLayers(d.pattern, d.ink);
-    card.style.backgroundImage = pl.img.concat(['linear-gradient(150deg,' + d.c1 + ',' + d.c2 + ')']).join(',');
-    card.style.backgroundSize = pl.size.concat(['auto']).join(',');
+    // a soft light from the top corner, then the pattern, then the colour wash
+    card.style.backgroundImage = ['radial-gradient(circle at 88% -4%,rgba(255,255,255,.30),transparent 58%)'].concat(pl.img, ['linear-gradient(150deg,' + d.c1 + ',' + d.c2 + ')']).join(',');
+    card.style.backgroundSize = ['auto'].concat(pl.size, ['auto']).join(',');
     card.style.backgroundColor = d.c1;
     card.style.color = d.ink;
+    card.appendChild(buildScene(d, t));
     var top = el('div', 'card-top');
     top.appendChild(el('span', 'chip', t.label));
     var m = el('span', 'motif');
@@ -109,14 +188,21 @@
     who.appendChild(el('div', 'to', String(c.to == null ? '' : c.to)));
     card.appendChild(who);
     card.appendChild(el('div', 'msg', String(c.message == null ? '' : c.message)));
+    if (c.videoSrc) {
+      var vid = document.createElement('video');
+      vid.className = 'card-video';
+      vid.src = c.videoSrc; vid.controls = true; vid.playsInline = true; vid.preload = 'metadata';
+      vid.setAttribute('playsinline', '');
+      card.appendChild(vid);
+    }
     if (Array.isArray(c.imageSrcs) && c.imageSrcs.length) {
-      var g = el('div', 'media-imgs' + (c.imageSrcs.length === 1 ? ' one' : ''));
+      var gal = el('div', 'media-imgs' + (c.imageSrcs.length === 1 ? ' one' : ''));
       c.imageSrcs.slice(0, 3).forEach(function (src) {
         var im = document.createElement('img');
         im.src = src; im.alt = 'Мэндчилгээний зураг';
-        g.appendChild(im);
+        gal.appendChild(im);
       });
-      card.appendChild(g);
+      card.appendChild(gal);
     }
     var foot = el('div', 'card-foot');
     foot.appendChild(el('span', 'from', '— ' + String(c.from == null ? '' : c.from)));
@@ -131,9 +217,48 @@
     return out;
   }
 
+  // Shrink a picked photo to a JPEG data URL (the server checks the bytes again).
+  function shrink(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader(), im = new Image();
+      reader.onerror = function () { reject(); };
+      reader.onload = function () { im.src = reader.result; };
+      reader.readAsDataURL(file);
+      im.onload = function () {
+        var side = 1200, tries = 0, q = 0.82;
+        var s = Math.min(1, side / Math.max(im.width, im.height));
+        var cv = document.createElement('canvas');
+        cv.width = Math.max(1, Math.round(im.width * s)); cv.height = Math.max(1, Math.round(im.height * s));
+        var cx = cv.getContext('2d');
+        cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+        cx.drawImage(im, 0, 0, cv.width, cv.height);
+        var out = cv.toDataURL('image/jpeg', q);
+        while (out.length * 0.75 > 400 * 1024 && tries < 8) {
+          q -= 0.1;
+          if (q < 0.3) { cv.width = Math.round(cv.width * 0.8); cv.height = Math.round(cv.height * 0.8); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height); q = 0.7; }
+          out = cv.toDataURL('image/jpeg', q); tries++;
+        }
+        out.length * 0.75 > 440 * 1024 ? reject() : resolve(out);
+      };
+      im.onerror = function () { reject(); };
+    });
+  }
+
+  // Sends a video to the server as raw bytes and resolves with a one-time token the card will carry.
+  var VIDEO_LIMIT = 12 * 1024 * 1024;
+  function uploadVideo(file) {
+    if (!file || !/^video\//.test(file.type || '')) return Promise.reject(new Error('Видео сонгоно уу.'));
+    if (file.size > VIDEO_LIMIT) return Promise.reject(new Error('Видео 12MB-аас бага байх ёстой. Богино бичлэг сонгоно уу.'));
+    return fetch('/api/uploads/video', { method: 'POST', headers: { 'Content-Type': file.type }, body: file }).then(function (r) {
+      return r.json().then(function (j) { if (!r.ok) throw new Error((j && j.error) || 'Видео оруулж чадсангүй.'); return j.token; });
+    });
+  }
+  function videoUrl(cardId, has) { return has ? '/api/cards/' + cardId + '/video' : ''; }
+
   g.SC = {
-    imageUrls: imageUrls,
+    uploadVideo: uploadVideo, videoUrl: videoUrl,
+    imageUrls: imageUrls, shrink: shrink,
     MOTIFS: MOTIFS, MOTIF_ORDER: MOTIF_ORDER, PATTERNS: PATTERNS, PATTERN_ORDER: PATTERN_ORDER, FONTS: FONTS, FONT_ORDER: FONT_ORDER,
     PALETTES: PALETTES, TEMPLATES: TEMPLATES, TEMPLATE_ORDER: TEMPLATE_ORDER, buildCard: buildCard, el: el
   };
-})(window);
+})(typeof window !== 'undefined' ? window : globalThis);
