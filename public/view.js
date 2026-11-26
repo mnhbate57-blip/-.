@@ -85,6 +85,7 @@
 
   fetch('/api/cards/' + m[1]).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (card) {
     card.imageSrcs = SC.imageUrls(m[1], card.images);
+    card.videoSrc = SC.videoUrl(m[1], card.video);
     theme(card);
     // Premium cards open like an envelope. Free cards (and plain older cards) show at once.
     if (card.plan === 'premium') envelope(card); else showCard(card);
