@@ -41,22 +41,22 @@
   ];
   // scene: six decorations that float behind the text (matched to the template's own motif)
   var TEMPLATES = {
-    love: { label: 'Хайрын мэндчилгээ', pal: 0, pattern: 'hearts', font: 'hand', motif: 'heart', align: 'left', scene: ['heart', 'heart', 'heart', 'star', 'heart', 'heart'] },
-    bday: { label: 'Төрсөн өдөр', pal: 1, pattern: 'confetti', font: 'hand', motif: 'cake', align: 'left', scene: ['balloon', 'star', 'balloon', 'gift', 'star', 'balloon'] },
-    letter: { label: 'Захидал', pal: 11, pattern: 'lines', font: 'hand', motif: 'envelope', align: 'left', scene: ['envelope', 'heart', 'envelope', 'star', 'heart', 'envelope'] },
+    love: { label: 'Хайрын үг', pal: 0, pattern: 'hearts', font: 'hand', motif: 'heart', align: 'left', scene: ['heart', 'heart', 'heart', 'star', 'heart', 'heart'] },
+    bday: { label: 'Төрсөн өдрийн мэнд', pal: 1, pattern: 'confetti', font: 'hand', motif: 'cake', align: 'left', scene: ['balloon', 'star', 'balloon', 'gift', 'star', 'balloon'] },
+    letter: { label: 'Сэтгэлийн захидал', pal: 11, pattern: 'lines', font: 'hand', motif: 'envelope', align: 'left', scene: ['envelope', 'heart', 'envelope', 'star', 'heart', 'envelope'] },
     cheers: { label: 'Баяр хүргэе', pal: 3, pattern: 'stars', font: 'round', motif: 'star', align: 'center', scene: ['star', 'firework', 'star', 'star', 'firework', 'star'] },
-    thanks: { label: 'Талархал', pal: 4, pattern: 'dots', font: 'serif', motif: 'flower', align: 'center', scene: ['flower', 'heart', 'flower', 'butterfly', 'flower', 'heart'] },
-    night: { label: 'Шөнийн мэнд', pal: 6, pattern: 'stars', font: 'serif', motif: 'moon', align: 'center', scene: ['moon', 'star', 'star', 'star', 'star', 'star'] },
-    sunny: { label: 'Нартай мэнд', pal: 7, pattern: 'waves', font: 'bold', motif: 'sun', align: 'left', scene: ['sun', 'rainbow', 'butterfly', 'sun', 'flower', 'sun'] },
+    thanks: { label: 'Талархлын үг', pal: 4, pattern: 'dots', font: 'serif', motif: 'flower', align: 'center', scene: ['flower', 'heart', 'flower', 'butterfly', 'flower', 'heart'] },
+    night: { label: 'Сайхан амраарай', pal: 6, pattern: 'stars', font: 'serif', motif: 'moon', align: 'center', scene: ['moon', 'star', 'star', 'star', 'star', 'star'] },
+    sunny: { label: 'Сайхан өдрийн мэнд', pal: 7, pattern: 'waves', font: 'bold', motif: 'sun', align: 'left', scene: ['sun', 'rainbow', 'butterfly', 'sun', 'flower', 'sun'] },
     gift: { label: 'Бэлгийн карт', pal: 10, pattern: 'stripes', font: 'sans', motif: 'gift', align: 'center', scene: ['gift', 'star', 'gift', 'heart', 'star', 'gift'] },
-    tsagaan: { label: 'Цагаан сар', pal: 13, pattern: 'sparkle', font: 'serif', motif: 'ger', align: 'center', scene: ['ger', 'sun', 'star', 'ger', 'star', 'sun'] },
-    newyear: { label: 'Шинэ жил', pal: 14, pattern: 'snow', font: 'round', motif: 'firework', align: 'center', scene: ['firework', 'star', 'bell', 'firework', 'star', 'snow'] },
+    tsagaan: { label: 'Цагаан сарын мэнд', pal: 13, pattern: 'sparkle', font: 'serif', motif: 'ger', align: 'center', scene: ['ger', 'sun', 'star', 'ger', 'star', 'sun'] },
+    newyear: { label: 'Шинэ жилийн мэнд', pal: 14, pattern: 'snow', font: 'round', motif: 'firework', align: 'center', scene: ['firework', 'star', 'bell', 'firework', 'star', 'snow'] },
     wedding: { label: 'Хуримын мэнд', pal: 15, pattern: 'flowers', font: 'serif', motif: 'ring', align: 'center', scene: ['ring', 'heart', 'flower', 'heart', 'ring', 'flower'] },
-    graduation: { label: 'Төгсөлтийн баяр', pal: 16, pattern: 'stars', font: 'bold', motif: 'cap', align: 'center', scene: ['cap', 'star', 'cap', 'star', 'firework', 'star'] },
-    mother: { label: 'Ээж, эмэгтэйчүүдэд', pal: 17, pattern: 'flowers', font: 'hand', motif: 'flower', align: 'left', scene: ['flower', 'heart', 'flower', 'butterfly', 'heart', 'flower'] },
-    friend: { label: 'Найзын мэнд', pal: 18, pattern: 'confetti', font: 'round', motif: 'rainbow', align: 'center', scene: ['rainbow', 'star', 'heart', 'butterfly', 'star', 'sun'] },
-    getwell: { label: 'Эдгэрэлт хүсье', pal: 19, pattern: 'dots', font: 'hand', motif: 'butterfly', align: 'left', scene: ['butterfly', 'flower', 'sun', 'heart', 'butterfly', 'star'] },
-    baby: { label: 'Шинэ хүүхэд', pal: 20, pattern: 'dots', font: 'round', motif: 'balloon', align: 'center', scene: ['balloon', 'star', 'heart', 'balloon', 'star', 'bell'] }
+    graduation: { label: 'Төгсөлтийн мэнд', pal: 16, pattern: 'stars', font: 'bold', motif: 'cap', align: 'center', scene: ['cap', 'star', 'cap', 'star', 'firework', 'star'] },
+    mother: { label: 'Ээжид зориулав', pal: 17, pattern: 'flowers', font: 'hand', motif: 'flower', align: 'left', scene: ['flower', 'heart', 'flower', 'butterfly', 'heart', 'flower'] },
+    friend: { label: 'Найздаа', pal: 18, pattern: 'confetti', font: 'round', motif: 'rainbow', align: 'center', scene: ['rainbow', 'star', 'heart', 'butterfly', 'star', 'sun'] },
+    getwell: { label: 'Эдгэрэхийг хүсье', pal: 19, pattern: 'dots', font: 'hand', motif: 'butterfly', align: 'left', scene: ['butterfly', 'flower', 'sun', 'heart', 'butterfly', 'star'] },
+    baby: { label: 'Хүүхэд мэндэлсэн', pal: 20, pattern: 'dots', font: 'round', motif: 'balloon', align: 'center', scene: ['balloon', 'star', 'heart', 'balloon', 'star', 'bell'] }
   };
   var TEMPLATE_ORDER = ['love', 'bday', 'letter', 'cheers', 'thanks', 'night', 'sunny', 'gift', 'tsagaan', 'newyear', 'wedding', 'graduation', 'mother', 'friend', 'getwell', 'baby'];
   var HEX = /^#[0-9a-fA-F]{6}$/;
