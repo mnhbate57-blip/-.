@@ -50,6 +50,63 @@
     st.appendChild(stat('Хүлээгдэж буй', String(pending.length)));
     renderRows();
     renderBoxes();
+    renderWeek();
+    renderTemplates();
+    renderMedia();
+  }
+
+  var TABS = ['overview', 'orders', 'templates', 'media', 'boxes-tab'];
+  function showTab(name) {
+    if (TABS.indexOf(name) < 0) name = 'overview';
+    TABS.forEach(function (t) { $('pane-' + t).hidden = t !== name; });
+    document.querySelectorAll('.adm-tab').forEach(function (b) { b.setAttribute('aria-selected', String(b.getAttribute('data-tab') === name)); });
+    store('ss_tab', name);
+  }
+  document.querySelectorAll('.adm-tab').forEach(function (b) { b.addEventListener('click', function () { showTab(b.getAttribute('data-tab')); }); });
+
+  function bar(label, n, max, note) {
+    var row = el('div', 'bar-row');
+    row.appendChild(el('span', 'bar-label', label));
+    var track = el('span', 'bar-track'), fill = el('span', 'bar-fill');
+    fill.style.width = (max ? Math.max(n ? 3 : 0, Math.round(n / max * 100)) : 0) + '%';
+    track.appendChild(fill); row.appendChild(track);
+    row.appendChild(el('span', 'bar-n', String(n) + (note || '')));
+    return row;
+  }
+  function renderWeek() {
+    var box = $('week'); box.textContent = '';
+    var days = [], names = ['Ня', 'Да', 'Мя', 'Лх', 'Пү', 'Ба', 'Бя'];
+    for (var i = 6; i >= 0; i--) { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i); days.push(d); }
+    var counts = days.map(function (d) { var e = d.getTime() + 864e5; return data.orders.filter(function (r) { return r.createdAt >= d.getTime() && r.createdAt < e; }).length; });
+    var max = Math.max.apply(null, counts.concat([1]));
+    days.forEach(function (d, i) { box.appendChild(bar(names[d.getDay()] + ' ' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()), counts[i], max)); });
+  }
+  function renderTemplates() {
+    var box = $('tpl-bars'); box.textContent = '';
+    var c = {};
+    data.orders.forEach(function (r) { var k = r.type || 'love'; c[k] = (c[k] || 0) + 1; });
+    var keys = Object.keys(TYPE_NAMES).sort(function (a, b) { return (c[b] || 0) - (c[a] || 0); });
+    var max = Math.max.apply(null, keys.map(function (k) { return c[k] || 0; }).concat([1]));
+    keys.forEach(function (k) { box.appendChild(bar(TYPE_NAMES[k], c[k] || 0, max)); });
+  }
+  function renderMedia() {
+    var withImg = data.orders.filter(function (r) { return r.images > 0; });
+    var withVid = data.orders.filter(function (r) { return r.video; });
+    var imgTotal = data.orders.reduce(function (s, r) { return s + (r.images || 0); }, 0);
+    var st = $('media-stats'); st.textContent = '';
+    st.appendChild(stat('Зурагтай карт', String(withImg.length)));
+    st.appendChild(stat('Нийт зураг', String(imgTotal)));
+    st.appendChild(stat('Видеотой карт', String(withVid.length)));
+    var body = $('media-rows'); body.textContent = '';
+    data.orders.filter(function (r) { return r.images > 0 || r.video; }).slice(0, 100).forEach(function (r) {
+      var tr = el('tr');
+      tr.appendChild(el('td', '', fmt(r.createdAt)));
+      tr.appendChild(el('td', 'wrapcell', r.to));
+      tr.appendChild(el('td', '', TYPE_NAMES[r.type] || ''));
+      tr.appendChild(el('td', 'num', String(r.images || 0)));
+      tr.appendChild(el('td', '', r.video ? 'Тийм' : '-'));
+      body.appendChild(tr);
+    });
   }
 
   function filtered() {
@@ -84,7 +141,7 @@
       tr.appendChild(el('td', 'wrapcell', r.to));
       tr.appendChild(el('td', 'wrapcell', r.from));
       tr.appendChild(el('td', '', (TYPE_NAMES[r.type] || '') + (r.mailbox ? ' (хайрцаг)' : '')));
-      tr.appendChild(el('td', '', r.images ? String(r.images) : '-'));
+      tr.appendChild(el('td', '', (r.images ? r.images + ' зураг' : '') + (r.images && r.video ? ', ' : '') + (r.video ? 'видео' : '') || '-'));
       var tp = el('td'); tp.appendChild(el('span', 'tag ' + (r.plan === 'premium' ? 'premium' : ''), r.plan === 'premium' ? 'Premium' : 'Үнэгүй')); tr.appendChild(tp);
       var ts = el('td'); ts.appendChild(el('span', 'tag ' + (r.status === 'paid' ? 'paid' : 'pending'), r.status === 'paid' ? 'Бэлэн' : 'Хүлээгдэж буй')); tr.appendChild(ts);
       tr.appendChild(el('td', 'num', r.status === 'paid' ? money(r.paidAmount) : money(r.amount)));
@@ -100,6 +157,7 @@
       $('login').hidden = true; $('dash').hidden = false; $('logout').hidden = false;
       setStatus('dash-status', '', '');
       render();
+      showTab(load('ss_tab') || 'overview');
     }).catch(function (e) {
       if (e.message === 'bad') showLogin(first ? 'Түлхүүр буруу байна.' : 'Нэвтрэх хугацаа дууссан. Дахин оруулна уу.');
       else if (e.message === 'slow') showLogin('Хэт олон буруу оролдлого. 10 минут хүлээнэ үү.');
