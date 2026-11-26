@@ -24,6 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Comfortaa:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/box.css">
 </head>
 <body>
 <main class="wrap">
@@ -42,6 +43,17 @@
     </ul>
     <a class="btn hero-cta" href="#compose-title">Карт бичиж эхлэх</a>
   </header>
+
+  <section class="panel box-promo" id="box-promo" aria-labelledby="box-title">
+    <h2 id="box-title">Өөрийн шуудангийн хайрцаг үүсгэх</h2>
+    <p class="note">Бүртгэл шаардахгүй. Нэрээ бичээд холбоос аваарай. Түүнийг стори, чат дээрээ тавихад хэн ч танд мэндчилгээ бичиж илгээнэ. Та дараа нь нууц холбоосоороо орж уншина.</p>
+    <form class="box-form" id="box-form" novalidate>
+      <input type="text" id="box-name" maxlength="40" placeholder="Таны нэр" autocomplete="nickname" aria-label="Таны нэр">
+      <button type="submit" class="btn" id="box-btn">Хайрцаг үүсгэх</button>
+    </form>
+    <div class="status" id="box-status" role="status"></div>
+    <div><a class="btn ghost" id="box-mine" href="#" hidden>Миний хайрцаг руу орох</a></div>
+  </section>
 
   <section id="view-compose" class="compose" aria-labelledby="compose-title">
     <form class="panel" id="form" novalidate>
@@ -142,5 +154,6 @@
 </main>
 <script src="/card.js"></script>
 <script src="/app.js"></script>
+<script src="/start.js"></script>
 </body>
 </html>
