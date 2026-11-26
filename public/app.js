@@ -30,6 +30,7 @@
 
   /* ---------- pictures: shrink to JPEG in the browser, the server checks again ---------- */
   var pics = []; // { dataUrl, name }
+  function maxPics() { return plan === 'premium' ? 3 : 1; }
   function picNote(msg, bad) { var n = $('media-note'); n.textContent = msg; n.style.color = bad ? 'var(--danger)' : ''; }
 
   function shrink(file) {
@@ -76,9 +77,9 @@
   $('img-input').addEventListener('change', function () {
     var files = Array.prototype.slice.call($('img-input').files).filter(function (f) { return /^image\//.test(f.type); });
     $('img-input').value = '';
-    var room = 3 - pics.length;
+    var room = maxPics() - pics.length;
     if (!files.length) { picNote('Зураг сонгоно уу.', true); return; }
-    if (room <= 0) { picNote('Зураг 3-аас олон оруулах боломжгүй.', true); return; }
+    if (room <= 0) { picNote(plan === 'premium' ? 'Зураг 3-аас олон оруулах боломжгүй.' : 'Үнэгүй картад 1 зураг. Premium-д 3 зураг.', true); return; }
     picNote('Зураг бэлтгэж байна…', false);
     Promise.all(files.slice(0, room).map(function (f) { return shrink(f).then(function (d) { return { dataUrl: d, name: f.name }; }, function () { return null; }); })).then(function (list) {
       var failed = list.some(function (x) { return !x; });
@@ -89,10 +90,36 @@
     });
   });
 
+  var vid = null; // { token, url, name }
+  function renderVid() {
+    var box = $('vid-picked'); box.textContent = '';
+    if (vid) {
+      var row = el('div', 'pick-row');
+      row.appendChild(el('span', 'pick-name', 'Видео: ' + vid.name));
+      var rm = el('button', 'btn ghost', 'Хасах'); rm.type = 'button';
+      rm.addEventListener('click', function () { if (vid.url) URL.revokeObjectURL(vid.url); vid = null; renderVid(); renderPreview(); });
+      row.appendChild(rm); box.appendChild(row);
+    }
+    $('add-vid').hidden = !!vid;
+  }
+  $('add-vid').addEventListener('click', function () { $('vid-input').click(); });
+  $('vid-input').addEventListener('change', function () {
+    var f = $('vid-input').files[0]; $('vid-input').value = '';
+    if (!f) return;
+    picNote('Видео оруулж байна…', false);
+    $('add-vid').disabled = true;
+    SC.uploadVideo(f).then(function (token) {
+      vid = { token: token, url: URL.createObjectURL(f), name: f.name };
+      picNote('Видео бэлэн боллоо.', false);
+      renderVid(); renderPreview();
+    }, function (e) { picNote(e && e.message ? e.message : 'Видео оруулж чадсангүй.', true); })
+      .then(function () { $('add-vid').disabled = false; });
+  });
+
   var SAMPLE = { to: 'Хайртай найздаа', from: 'Таны нэр', message: 'Чамд баяр баясгалан, эрүүл энх, үргэлж инээмсэглэл хүсье.' };
   function renderPreview() {
     var d = draft(), ghost = !d.message;
-    var c = Object.assign({}, d, { to: d.to || SAMPLE.to, from: d.from || SAMPLE.from, message: d.message || SAMPLE.message, createdAt: Date.now(), imageSrcs: pics.map(function (p) { return p.dataUrl; }) });
+    var c = Object.assign({}, d, { to: d.to || SAMPLE.to, from: d.from || SAMPLE.from, message: d.message || SAMPLE.message, createdAt: Date.now(), imageSrcs: pics.map(function (p) { return p.dataUrl; }), videoSrc: vid ? vid.url : '' });
     var box = $('preview');
     box.textContent = '';
     box.appendChild(SC.buildCard(c, ghost));
@@ -197,7 +224,7 @@
     busy = true;
     $('pay-btn').disabled = true;
     setStatus('status', 'Нэхэмжлэх үүсгэж байна…', '');
-    fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: plan, card: d, images: plan === 'premium' ? pics.map(function (p) { return p.dataUrl; }) : [] }) })
+    fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: plan, card: d, images: pics.slice(0, maxPics()).map(function (p) { return p.dataUrl; }), video: vid ? vid.token : null }) })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
       .then(function (r) {
         if (!r.ok) { setStatus('status', (r.body && r.body.error) || 'Алдаа гарлаа. Дахин оролдоно уу.', 'bad'); return; }
@@ -216,7 +243,7 @@
           banks.appendChild(a);
         });
         $('pay-preview').textContent = '';
-        $('pay-preview').appendChild(SC.buildCard(Object.assign({}, d, { createdAt: Date.now(), imageSrcs: pics.map(function (p) { return p.dataUrl; }) })));
+        $('pay-preview').appendChild(SC.buildCard(Object.assign({}, d, { createdAt: Date.now(), imageSrcs: pics.map(function (p) { return p.dataUrl; }), videoSrc: vid ? vid.url : '' })));
         $('wait-text').textContent = 'Төлбөр хүлээж байна…';
         document.querySelector('.pulse').hidden = false;
         show('view-pay');
@@ -242,6 +269,7 @@
       var box = $('done-card');
       box.textContent = '';
       card.imageSrcs = SC.imageUrls(o.cardId, card.images);
+      card.videoSrc = SC.videoUrl(o.cardId, card.video);
       box.appendChild(SC.buildCard(card));
       $('share-link').value = url;
       var text = 'Танд сэтгэлийн шуудан ирлээ: ' + url;
@@ -281,6 +309,8 @@
     order = null; store('ss_order', null);
     $('to').value = ''; $('message').value = ''; $('count').textContent = countText();
     pics = []; renderPics();
+    if (vid && vid.url) URL.revokeObjectURL(vid.url);
+    vid = null; renderVid();
     setStatus('status', '', '');
     renderPreview();
     show('view-compose');
@@ -295,6 +325,7 @@
     $('plan-free').setAttribute('aria-checked', String(!premium));
     $('plan-premium').setAttribute('aria-checked', String(premium));
     $('advanced').hidden = !premium;
+    $('add-img').hidden = false;
     var msg = $('message');
     msg.maxLength = maxLen();
     if (msg.value.length > maxLen()) msg.value = msg.value.slice(0, maxLen());
@@ -325,10 +356,10 @@
     if (plan === next) return;
     plan = next;
     if (plan === 'free') {
-      // The free plan uses the template's own look and no pictures.
+      // The free plan uses the template's own look and one picture.
       applyTemplate(D.type);
       syncColors();
-      pics = [];
+      pics = pics.slice(0, 1);
       renderPics();
       customOpen = false;
       renderControls();
@@ -342,6 +373,7 @@
   /* ---------- start ---------- */
   renderControls();
   syncColors();
+  renderVid();
   renderPreview();
   renderPlan();
 
