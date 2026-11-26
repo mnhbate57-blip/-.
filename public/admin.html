@@ -34,9 +34,24 @@
   </section>
 
   <section id="dash" hidden>
-    <div class="adm-stats" id="stats"></div>
+    <nav class="adm-tabs" role="tablist" aria-label="Самбарын хэсгүүд">
+      <button type="button" class="adm-tab" role="tab" data-tab="overview" aria-selected="true">Тойм</button>
+      <button type="button" class="adm-tab" role="tab" data-tab="orders" aria-selected="false">Захиалгууд</button>
+      <button type="button" class="adm-tab" role="tab" data-tab="templates" aria-selected="false">Загварууд</button>
+      <button type="button" class="adm-tab" role="tab" data-tab="media" aria-selected="false">Зураг, видео</button>
+      <button type="button" class="adm-tab" role="tab" data-tab="boxes-tab" aria-selected="false">Хайрцгууд</button>
+    </nav>
+    <div class="status" id="dash-status" role="status"></div>
 
-    <div class="panel">
+    <div class="adm-pane" id="pane-overview" role="tabpanel">
+      <div class="adm-stats" id="stats"></div>
+      <div class="panel">
+        <h2>Сүүлийн 7 хоног</h2>
+        <div class="bars" id="week"></div>
+      </div>
+    </div>
+
+    <div class="panel adm-pane" id="pane-orders" role="tabpanel" hidden>
       <div class="adm-tools">
         <h2>Захиалгууд</h2>
         <div class="adm-filters">
@@ -51,7 +66,6 @@
           <button type="button" class="btn ghost" id="csv">CSV татах</button>
         </div>
       </div>
-      <div class="status" id="dash-status" role="status"></div>
       <div class="adm-table-wrap">
         <table class="adm-table">
           <thead><tr><th>Огноо</th><th>Хэнд</th><th>Хэнээс</th><th>Загвар</th><th>Зураг</th><th>Төрөл</th><th>Төлөв</th><th class="num">Дүн</th></tr></thead>
@@ -61,7 +75,27 @@
       <p class="note" id="count-note"></p>
     </div>
 
-    <div class="panel">
+    <div class="panel adm-pane" id="pane-templates" role="tabpanel" hidden>
+      <h2>Загваруудын эрэлт</h2>
+      <p class="note">Аль загварыг хамгийн их ашигласныг харуулна.</p>
+      <div class="bars" id="tpl-bars"></div>
+    </div>
+
+    <div class="adm-pane" id="pane-media" role="tabpanel" hidden>
+      <div class="adm-stats" id="media-stats"></div>
+      <div class="panel">
+        <h2>Зураг, видеотой картууд</h2>
+        <p class="note">Агуулгыг харуулахгүй, зөвхөн тоо. Хадгалагдсан зураг, видео нь серверийн дискийг дүүргэдэг тул тоог анхаарна уу.</p>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Огноо</th><th>Хэнд</th><th>Загвар</th><th class="num">Зураг</th><th>Видео</th></tr></thead>
+            <tbody id="media-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel adm-pane" id="pane-boxes-tab" role="tabpanel" hidden>
       <h2>Шуудангийн хайрцгууд</h2>
       <p class="note">Нууц холбоос, зурвасын агуулга энд харагдахгүй. Зөвхөн тоо.</p>
       <div class="adm-table-wrap">
