@@ -49,6 +49,7 @@
     st.appendChild(stat('Үнэгүй', String(rows.length - premium.length)));
     st.appendChild(stat('Хүлээгдэж буй', String(pending.length)));
     renderRows();
+    renderBoxes();
   }
 
   function filtered() {
@@ -62,6 +63,19 @@
     });
   }
 
+  var TYPE_NAMES = { love: 'Хайр', bday: 'Төрсөн өдөр', letter: 'Захидал', cheers: 'Баяр хүргэе', thanks: 'Талархал', night: 'Шөнийн мэнд', sunny: 'Нартай мэнд', gift: 'Бэлэг', tsagaan: 'Цагаан сар', newyear: 'Шинэ жил', wedding: 'Хурим', graduation: 'Төгсөлт', mother: 'Ээж', friend: 'Найз', getwell: 'Эдгэрэлт', baby: 'Шинэ хүүхэд' };
+  function renderBoxes() {
+    var body = $('boxes'); body.textContent = '';
+    (data.mailboxes || []).forEach(function (b) {
+      var tr = el('tr');
+      tr.appendChild(el('td', '', fmt(b.createdAt)));
+      tr.appendChild(el('td', 'wrapcell', b.name));
+      tr.appendChild(el('td', 'num', String(b.messages)));
+      tr.appendChild(el('td', 'num', String(b.withPictures)));
+      body.appendChild(tr);
+    });
+  }
+
   function renderRows() {
     var list = filtered(), body = $('rows'); body.textContent = '';
     list.forEach(function (r) {
@@ -69,6 +83,8 @@
       tr.appendChild(el('td', '', fmt(r.createdAt)));
       tr.appendChild(el('td', 'wrapcell', r.to));
       tr.appendChild(el('td', 'wrapcell', r.from));
+      tr.appendChild(el('td', '', (TYPE_NAMES[r.type] || '') + (r.mailbox ? ' (хайрцаг)' : '')));
+      tr.appendChild(el('td', '', r.images ? String(r.images) : '-'));
       var tp = el('td'); tp.appendChild(el('span', 'tag ' + (r.plan === 'premium' ? 'premium' : ''), r.plan === 'premium' ? 'Premium' : 'Үнэгүй')); tr.appendChild(tp);
       var ts = el('td'); ts.appendChild(el('span', 'tag ' + (r.status === 'paid' ? 'paid' : 'pending'), r.status === 'paid' ? 'Бэлэн' : 'Хүлээгдэж буй')); tr.appendChild(ts);
       tr.appendChild(el('td', 'num', r.status === 'paid' ? money(r.paidAmount) : money(r.amount)));
@@ -109,9 +125,9 @@
   }
   $('csv').addEventListener('click', function () {
     if (!data) return;
-    var lines = [['Огноо', 'Хэнд', 'Хэнээс', 'Төрөл', 'Төлөв', 'Дүн'].map(cell).join(',')];
+    var lines = [['Огноо', 'Хэнд', 'Хэнээс', 'Загвар', 'Зураг', 'Төрөл', 'Төлөв', 'Дүн'].map(cell).join(',')];
     filtered().forEach(function (r) {
-      lines.push([fmt(r.createdAt), r.to, r.from, r.plan, r.status, r.status === 'paid' ? r.paidAmount : r.amount].map(cell).join(','));
+      lines.push([fmt(r.createdAt), r.to, r.from, r.type, r.images, r.plan, r.status, r.status === 'paid' ? r.paidAmount : r.amount].map(cell).join(','));
     });
     var a = document.createElement('a');
     a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent('﻿' + lines.join('\r\n'));
