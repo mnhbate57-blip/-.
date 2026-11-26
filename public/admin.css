@@ -29,3 +29,14 @@ input[type="password"], select {
 .tag.paid { color: var(--ok); }
 .tag.pending { color: var(--danger); }
 @media (max-width: 560px) { .adm-filters input[type="text"] { width: 100%; } .adm-filters { width: 100%; } }
+
+.adm-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.adm-tab { font: inherit; font-weight: 700; font-size: .92rem; color: var(--muted); background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.adm-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.adm-pane[hidden] { display: none; }
+.bars { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.bar-row { display: grid; grid-template-columns: minmax(90px, 160px) 1fr 44px; gap: 10px; align-items: center; font-size: .9rem; }
+.bar-label { overflow-wrap: anywhere; }
+.bar-track { background: var(--soft); border-radius: 999px; height: 12px; overflow: hidden; border: 1px solid var(--line); }
+.bar-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #f07a3c); border-radius: 999px; }
+.bar-n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
