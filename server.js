@@ -19,6 +19,13 @@ if (config.isProd && config.provider === 'qpay' && !/^https:\/\//.test(config.ba
 }
 
 const store = createStore(config.dataFile);
+// Mailboxes need no account: a public id to receive cards, a secret key to read them. The key is kept in the record's cardId slot so the same store code can look it up.
+const mailboxes = createStore(path.join(path.dirname(config.dataFile), 'mailboxes.json'));
+const MAILBOX_MAX_MESSAGES = 500;
+function boxMessages(box) {
+  return store.all().filter((o) => o.mailboxId === box.id && o.status === 'paid').sort((a, b) => b.paidAt - a.paidAt);
+}
+function htmlEscape(v) { return String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
 /* ---------- card validation: the browser is never trusted ---------- */
 const TYPES = ['love', 'bday', 'letter', 'cheers', 'thanks', 'night', 'sunny', 'gift'];
@@ -211,13 +218,17 @@ function originOf(req) {
   return proto + '://' + host;
 }
 
-function serveStatic(res, rel, req) {
+function serveStatic(res, rel, req, vars) {
   const file = path.normalize(path.join(PUBLIC, rel));
   if (file !== PUBLIC && !file.startsWith(PUBLIC + path.sep)) return send(res, 404, 'Not found');
   fs.readFile(file, (err, buf) => {
     if (err) return send(res, 404, 'Not found');
     const type = MIME[path.extname(file)] || 'application/octet-stream';
-    if (type.startsWith('text/html')) buf = Buffer.from(buf.toString('utf8').replace(/__ORIGIN__/g, originOf(req)), 'utf8');
+    if (type.startsWith('text/html')) {
+      let html = buf.toString('utf8').replace(/__ORIGIN__/g, originOf(req));
+      Object.keys(vars || {}).forEach((k) => { html = html.split('__' + k + '__').join(htmlEscape(vars[k])); });
+      buf = Buffer.from(html, 'utf8');
+    }
     res.writeHead(200, Object.assign({ 'Content-Type': type, 'Cache-Control': /^(text\/html|text\/css|text\/javascript)/.test(type) ? 'no-cache' : 'public, max-age=300' }, SECURITY));
     res.end(buf);
   });
@@ -320,6 +331,59 @@ async function handle(req, res) {
     });
   }
 
+  /* ---------- mailboxes ---------- */
+  if (m === 'POST' && p === '/api/mailboxes') {
+    if (rateLimited(clientIp(req) + ':mk', 5, 10 * 60 * 1000)) return send(res, 429, { error: 'Хэт олон хүсэлт илгээлээ. Түр хүлээгээд дахин оролдоно уу.' });
+    let body;
+    try { body = await readJson(req, 4096); } catch (e) { return send(res, e.status || 400, { error: 'Хүсэлт буруу байна.' }); }
+    const name = body && typeof body.name === 'string' ? body.name.trim().replace(/\s+/g, ' ').slice(0, 40) : '';
+    if (!name) return send(res, 400, { error: 'Нэрээ бичнэ үү.' });
+    const id = crypto.randomBytes(6).toString('hex');
+    const ownerKey = crypto.randomBytes(16).toString('hex');
+    await mailboxes.put({ id, cardId: ownerKey, name, createdAt: Date.now() });
+    return send(res, 201, { id, ownerKey, name });
+  }
+
+  if (m === 'GET' && (mm = /^\/api\/mailboxes\/([a-f0-9]{12})$/.exec(p))) {
+    const box = mailboxes.get(mm[1]);
+    if (!box) return send(res, 404, { error: 'Хайрцаг олдсонгүй.' });
+    return send(res, 200, { name: box.name });
+  }
+
+  // Anyone with the public link can drop a card in. It is always a free card addressed to the box owner.
+  if (m === 'POST' && (mm = /^\/api\/mailboxes\/([a-f0-9]{12})\/cards$/.exec(p))) {
+    if (rateLimited(clientIp(req) + ':send', 10, 10 * 60 * 1000)) return send(res, 429, { error: 'Хэт олон хүсэлт илгээлээ. Түр хүлээгээд дахин оролдоно уу.' });
+    const box = mailboxes.get(mm[1]);
+    if (!box) return send(res, 404, { error: 'Хайрцаг олдсонгүй.' });
+    let body;
+    try { body = await readJson(req, 16 * 1024); } catch (e) { return send(res, e.status || 400, { error: 'Хүсэлт буруу байна.' }); }
+    if (boxMessages(box).length >= MAILBOX_MAX_MESSAGES) return send(res, 429, { error: 'Энэ хайрцаг дүүрсэн байна.' });
+    const src = body && typeof body.card === 'object' && body.card ? body.card : {};
+    const card = validateCard(Object.assign({}, src, { to: box.name }), 'free');
+    if (!card) return send(res, 400, { error: 'Зурвасаа бичнэ үү.' });
+    const orderId = crypto.randomBytes(12).toString('hex');
+    const cardId = crypto.randomBytes(16).toString('hex');
+    const now = Date.now();
+    await store.put({ id: orderId, cardId, status: 'paid', amount: 0, card, images: 0, invoiceId: 'mailbox', mailboxId: box.id, createdAt: now, paidAt: now, paidAmount: 0, lastCheck: 0 });
+    return send(res, 201, { cardId });
+  }
+
+  // Only the secret key opens the inbox.
+  if (m === 'GET' && (mm = /^\/api\/inbox\/([a-f0-9]{32})$/.exec(p))) {
+    const box = mailboxes.getByCard(mm[1]);
+    if (!box) return send(res, 404, { error: 'Хайрцаг олдсонгүй.' });
+    const messages = boxMessages(box).slice(0, 300).map((o) => Object.assign({}, o.card, { cardId: o.cardId, createdAt: o.paidAt }));
+    return send(res, 200, { id: box.id, name: box.name, createdAt: box.createdAt, messages });
+  }
+
+  if (m === 'DELETE' && (mm = /^\/api\/inbox\/([a-f0-9]{32})\/cards\/([a-f0-9]{32})$/.exec(p))) {
+    const box = mailboxes.getByCard(mm[1]);
+    const order = box ? store.getByCard(mm[2]) : null;
+    if (!box || !order || order.mailboxId !== box.id) return send(res, 404, { error: 'Олдсонгүй.' });
+    await store.remove(order.id);
+    return send(res, 200, { ok: true });
+  }
+
   if (m === 'GET' && p === '/api/admin/orders') {
     const ip = clientIp(req);
     if (adminBlocked(ip)) return send(res, 429, { error: 'Too many attempts' });
@@ -335,6 +399,11 @@ async function handle(req, res) {
 
   if (m === 'GET' || m === 'HEAD') {
     if (p === '/') return serveStatic(res, 'index.html', req);
+    if ((mm = /^\/m\/([a-f0-9]{12})$/.exec(p))) {
+      const box = mailboxes.get(mm[1]);
+      return serveStatic(res, 'mailbox.html', req, { TITLE: box ? box.name + '-д мэндчилгээ илгээх' : 'Сэтгэлийн шуудан' });
+    }
+    if (/^\/inbox\/[a-f0-9]{32}$/.test(p)) return serveStatic(res, 'inbox.html', req);
     if (p === '/admin') return serveStatic(res, 'admin.html', req);
     if (/^\/c\/[a-f0-9]{32}$/.test(p)) return serveStatic(res, 'card.html', req);
     if (p.startsWith('/api/')) return send(res, 404, { error: 'Not found' });
