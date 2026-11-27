@@ -126,6 +126,7 @@
     fetch('/api/inbox/' + m[1], { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (d) {
       var firstLoad = !data;
       data = d; seenKey = 'ss_seen_' + d.id;
+      store('ss_box_pub', d.id);
       $('name').textContent = d.name;
       document.title = d.name + ' — шуудангийн хайрцаг';
       var url = location.origin + '/m/' + d.id;
