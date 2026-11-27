@@ -27,11 +27,13 @@
   function renderTypes() {
     var box = $('types'); box.textContent = '';
     SC.TEMPLATE_ORDER.forEach(function (k) {
-      var p = SC.PALETTES[SC.TEMPLATES[k].pal].c;
-      var b = el('button', 'opt'); b.type = 'button';
+      var t = SC.TEMPLATES[k], p = SC.PALETTES[t.pal].c;
+      var b = el('button', 'tile'); b.type = 'button';
       b.setAttribute('aria-pressed', String(type === k));
-      var dot = el('span', 'dot'); dot.style.background = 'linear-gradient(150deg,' + p[0] + ',' + p[1] + ')';
-      b.appendChild(dot); b.appendChild(el('span', '', SC.TEMPLATES[k].label));
+      b.style.background = 'linear-gradient(150deg,' + p[0] + ',' + p[1] + ')';
+      b.style.color = p[2];
+      var ic = el('span', 'tile-ic'); ic.innerHTML = SC.MOTIFS[t.motif].svg;
+      b.appendChild(ic); b.appendChild(el('span', 'tile-name', t.label));
       b.addEventListener('click', function () { type = k; renderTypes(); renderPreview(); });
       box.appendChild(b);
     });
