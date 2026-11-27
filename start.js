@@ -7,7 +7,17 @@
   function save(v) { try { localStorage.setItem('ss_box', v); } catch (e) {} }
 
   var mine = load();
-  if (mine && /^[a-f0-9]{32}$/.test(mine)) { $('box-mine').href = '/inbox/' + mine; $('box-mine').hidden = false; }
+  if (mine && /^[a-f0-9]{32}$/.test(mine)) {
+    $('box-mine').href = '/inbox/' + mine; $('box-mine').hidden = false;
+    // Show how many cards are waiting, right on the home page, so the owner never has to hunt for a link.
+    fetch('/api/inbox/' + mine, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d) return;
+      var seen = 0; try { seen = Number(localStorage.getItem('ss_seen_' + d.id)) || 0; } catch (e) {}
+      var fresh = d.messages.filter(function (x) { return x.createdAt > seen; }).length;
+      $('box-mine').textContent = fresh ? 'Ирсэн мэндчилгээ харах (' + fresh + ' шинэ)' : 'Миний хайрцаг (' + d.messages.length + ' мэндчилгээ)';
+      if (fresh) $('box-mine').className = 'btn';
+    }).catch(function () {});
+  }
 
   var busy = false;
   form.addEventListener('submit', function (ev) {
@@ -22,6 +32,7 @@
       .then(function (r) {
         if (!r.ok) { st.textContent = (r.body && r.body.error) || 'Алдаа гарлаа.'; st.className = 'status bad'; return; }
         save(r.body.ownerKey);
+        try { localStorage.setItem('ss_box_pub', r.body.id); } catch (e) {}
         location.href = '/inbox/' + r.body.ownerKey + '?new=1';
       })
       .catch(function () { st.textContent = 'Сервертэй холбогдож чадсангүй.'; st.className = 'status bad'; })
