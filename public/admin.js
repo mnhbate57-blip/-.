@@ -120,7 +120,7 @@
     });
   }
 
-  var TYPE_NAMES = {love: 'Хайрын үг', bday: 'Төрсөн өдрийн мэнд', letter: 'Сэтгэлийн захидал', cheers: 'Баяр хүргэе', thanks: 'Талархлын үг', night: 'Сайхан амраарай', sunny: 'Сайхан өдрийн мэнд', gift: 'Бэлгийн карт', tsagaan: 'Цагаан сарын мэнд', newyear: 'Шинэ жилийн мэнд', wedding: 'Хуримын мэнд', graduation: 'Төгсөлтийн мэнд', mother: 'Ээжид зориулав', friend: 'Найздаа', getwell: 'Эдгэрэхийг хүсье', baby: 'Хүүхэд мэндэлсэн'};
+  var TYPE_NAMES = {love: 'Хайрын үг', bday: 'Төрсөн өдрийн мэнд', letter: 'Сэтгэлийн захидал', cheers: 'Баяр хүргэе', thanks: 'Талархлын үг', night: 'Сайхан амраарай', sunny: 'Сайхан өдрийн мэнд', gift: 'Бэлгийн карт', tsagaan: 'Цагаан сарын мэнд', newyear: 'Шинэ жилийн мэнд', wedding: 'Аз жаргал хүсье', graduation: 'Төгсөлтийн мэнд', mother: 'Хайрт ээждээ', friend: 'Найздаа', getwell: 'Эдгэрэхийг хүсье', baby: 'Хүүхэдтэй болсонд баяр хүргэе'};
   function renderBoxes() {
     var body = $('boxes'); body.textContent = '';
     (data.mailboxes || []).forEach(function (b) {
