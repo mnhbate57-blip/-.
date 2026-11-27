@@ -51,12 +51,12 @@
     gift: { label: 'Бэлгийн карт', pal: 10, pattern: 'stripes', font: 'sans', motif: 'gift', align: 'center', scene: ['gift', 'star', 'gift', 'heart', 'star', 'gift'] },
     tsagaan: { label: 'Цагаан сарын мэнд', pal: 13, pattern: 'sparkle', font: 'serif', motif: 'ger', align: 'center', scene: ['ger', 'sun', 'star', 'ger', 'star', 'sun'] },
     newyear: { label: 'Шинэ жилийн мэнд', pal: 14, pattern: 'snow', font: 'round', motif: 'firework', align: 'center', scene: ['firework', 'star', 'bell', 'firework', 'star', 'snow'] },
-    wedding: { label: 'Хуримын мэнд', pal: 15, pattern: 'flowers', font: 'serif', motif: 'ring', align: 'center', scene: ['ring', 'heart', 'flower', 'heart', 'ring', 'flower'] },
+    wedding: { label: 'Аз жаргал хүсье', pal: 15, pattern: 'flowers', font: 'serif', motif: 'ring', align: 'center', scene: ['ring', 'heart', 'flower', 'heart', 'ring', 'flower'] },
     graduation: { label: 'Төгсөлтийн мэнд', pal: 16, pattern: 'stars', font: 'bold', motif: 'cap', align: 'center', scene: ['cap', 'star', 'cap', 'star', 'firework', 'star'] },
-    mother: { label: 'Ээжид зориулав', pal: 17, pattern: 'flowers', font: 'hand', motif: 'flower', align: 'left', scene: ['flower', 'heart', 'flower', 'butterfly', 'heart', 'flower'] },
+    mother: { label: 'Хайрт ээждээ', pal: 17, pattern: 'flowers', font: 'hand', motif: 'flower', align: 'left', scene: ['flower', 'heart', 'flower', 'butterfly', 'heart', 'flower'] },
     friend: { label: 'Найздаа', pal: 18, pattern: 'confetti', font: 'round', motif: 'rainbow', align: 'center', scene: ['rainbow', 'star', 'heart', 'butterfly', 'star', 'sun'] },
     getwell: { label: 'Эдгэрэхийг хүсье', pal: 19, pattern: 'dots', font: 'hand', motif: 'butterfly', align: 'left', scene: ['butterfly', 'flower', 'sun', 'heart', 'butterfly', 'star'] },
-    baby: { label: 'Хүүхэд мэндэлсэн', pal: 20, pattern: 'dots', font: 'round', motif: 'balloon', align: 'center', scene: ['balloon', 'star', 'heart', 'balloon', 'star', 'bell'] }
+    baby: { label: 'Хүүхэдтэй болсонд баяр хүргэе', pal: 20, pattern: 'dots', font: 'round', motif: 'balloon', align: 'center', scene: ['balloon', 'star', 'heart', 'balloon', 'star', 'bell'] }
   };
   var TEMPLATE_ORDER = ['love', 'bday', 'letter', 'cheers', 'thanks', 'night', 'sunny', 'gift', 'tsagaan', 'newyear', 'wedding', 'graduation', 'mother', 'friend', 'getwell', 'baby'];
   var HEX = /^#[0-9a-fA-F]{6}$/;
