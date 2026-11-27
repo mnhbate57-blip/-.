@@ -24,3 +24,10 @@
 .sent { text-align: center; align-items: center; }
 .sent .card { text-align: left; width: 100%; }
 .sent-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.key-details summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+.key-details[open] summary { margin-bottom: 12px; }
+
+.claim summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+.claim[open] summary { margin-bottom: 10px; }
+.claim .linkbox { margin-top: 8px; }
