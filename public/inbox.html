@@ -16,7 +16,7 @@
   <header class="mb-head">
     <span class="eyebrow">Миний шуудангийн хайрцаг</span>
     <h1 id="name">…</h1>
-    <p class="lede" id="lede">Доорх холбоосыг стори, чат дээрээ тавихад хэн ч танд мэндчилгээ илгээнэ.</p>
+    <p class="lede" id="lede">Танд ирсэн мэндчилгээ энд шууд харагдана. Доор хуваалцах холбоос бий.</p>
   </header>
 
   <section id="missing" class="panel empty" hidden>
@@ -26,6 +26,19 @@
   </section>
 
   <div id="main" hidden>
+    <section class="panel" aria-labelledby="inbox-title">
+      <div class="inbox-top">
+        <h2 id="inbox-title">Ирсэн мэндчилгээ <span class="note" id="count"></span></h2>
+        <button type="button" class="btn ghost" id="refresh">Шинэчлэх</button>
+      </div>
+      <div class="status" id="status" role="status"></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="empty" id="empty" hidden>
+        <b>Одоохондоо мэндчилгээ ирээгүй байна</b>
+        <span>Холбоосоо стори дээрээ тавиад хүлээгээрэй.</span>
+      </div>
+    </section>
+
     <section class="panel share-panel" aria-labelledby="share-title">
       <h2 id="share-title">Хуваалцах холбоос</h2>
       <p class="note">Энэ холбоосоор орсон хүн бүр танд карт бичиж илгээж чадна. Бүртгэл шаардахгүй.</p>
@@ -49,27 +62,14 @@
       </div>
     </section>
 
-    <section class="panel share-panel" aria-labelledby="key-title">
-      <h2 id="key-title">Таны нууц холбоос</h2>
-      <div class="warn">Энэ холбоос нь таны хайрцгийн түлхүүр. Зөвхөн та ашиглана, хэнд ч бүү өг. Алдвал ирсэн картуудаа дахин харах боломжгүй тул хаа нэгтээ хадгалаарай.</div>
+    <details class="panel key-details">
+      <summary>Өөр төхөөрөмжөөс орох нууц холбоос</summary>
+      <div class="warn">Энэ хайрцаг одоо таны төхөөрөмж дээр өөрөө хадгалагдсан тул дахин холбоос хуулах шаардлагагүй. Утас солих, хөтөч цэвэрлэх үед л хэрэг болно. Хэнд ч бүү өг.</div>
       <div class="linkbox">
         <input type="text" id="key-link" readonly aria-label="Нууц холбоос">
         <button type="button" class="btn ghost" id="key-copy">Хуулах</button>
       </div>
-    </section>
-
-    <section class="panel" aria-labelledby="inbox-title">
-      <div class="inbox-top">
-        <h2 id="inbox-title">Ирсэн мэндчилгээ <span class="note" id="count"></span></h2>
-        <button type="button" class="btn ghost" id="refresh">Шинэчлэх</button>
-      </div>
-      <div class="status" id="status" role="status"></div>
-      <div class="msgs" id="msgs"></div>
-      <div class="empty" id="empty" hidden>
-        <b>Одоохондоо мэндчилгээ ирээгүй байна</b>
-        <span>Холбоосоо стори дээрээ тавиад хүлээгээрэй.</span>
-      </div>
-    </section>
+    </details>
 
     <div><a class="btn ghost" href="/">Өөрөө карт бичих</a></div>
   </div>
