@@ -116,7 +116,7 @@
       .then(function () { $('add-vid').disabled = false; });
   });
 
-  var SAMPLE = { to: 'Хайртай найздаа', from: 'Таны нэр', message: 'Чамд баяр баясгалан, эрүүл энх, үргэлж инээмсэглэл хүсье.' };
+  var SAMPLE = { to: 'Хайртай найздаа', from: 'Таны нэр', message: 'Чамд баяр баясал, эрүүл энх, аз жаргалыг хүсье.' };
   function renderPreview() {
     var d = draft(), ghost = !d.message;
     var c = Object.assign({}, d, { to: d.to || SAMPLE.to, from: d.from || SAMPLE.from, message: d.message || SAMPLE.message, createdAt: Date.now(), imageSrcs: pics.map(function (p) { return p.dataUrl; }), videoSrc: vid ? vid.url : '' });
