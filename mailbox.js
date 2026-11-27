@@ -3,6 +3,13 @@
   var SC = window.SC, el = SC.el;
   var $ = function (id) { return document.getElementById(id); };
   var m = /^\/m\/([a-f0-9]{12})$/.exec(location.pathname);
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  // The owner taps their own story link: this browser already knows the box, so go straight to the received cards.
+  if (m && !/(^|[?&])send=1/.test(location.search)) {
+    var myKey = lsGet('ss_box');
+    if (lsGet('ss_box_pub') === m[1] && /^[a-f0-9]{32}$/.test(myKey || '')) { location.replace('/inbox/' + myKey); return; }
+  }
   var type = 'love', owner = '', busy = false, pics = [], vid = null;
 
   function look() {
@@ -79,6 +86,19 @@
       setStatus('', ''); renderVid(); renderPreview();
     }, function (e) { setStatus(e && e.message ? e.message : 'Видео оруулж чадсангүй.', 'bad'); })
       .then(function () { $('add-vid').disabled = false; });
+  });
+
+  // For other browsers (for example the one inside Instagram) the owner can prove it once with the secret link.
+  var claim = $('claim-btn');
+  if (claim) claim.addEventListener('click', function () {
+    var mt = /[a-f0-9]{32}/.exec($('claim-input').value || '');
+    var cs = $('claim-status');
+    if (!mt) { cs.textContent = 'Нууц холбоосоо бүтнээр нь буулгана уу.'; cs.className = 'status bad'; return; }
+    fetch('/api/inbox/' + mt[0], { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (d) {
+      if (!m || d.id !== m[1]) { cs.textContent = 'Энэ нууц холбоос өөр хайрцагных байна.'; cs.className = 'status bad'; return; }
+      lsSet('ss_box', mt[0]); lsSet('ss_box_pub', d.id);
+      location.replace('/inbox/' + mt[0]);
+    }).catch(function () { cs.textContent = 'Нууц холбоос буруу байна.'; cs.className = 'status bad'; });
   });
 
   if (!m) { show('view-missing'); return; }
