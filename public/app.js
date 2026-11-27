@@ -292,13 +292,22 @@
         share.appendChild(nb);
       }
       [
+        ['Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)],
+        ['Messenger', 'fb-messenger://share/?link=' + encodeURIComponent(url)],
+        ['Instagram', 'https://www.instagram.com/direct/inbox/'],
         ['Viber', 'viber://forward?text=' + encodeURIComponent(text)],
         ['Telegram', 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('Танд сэтгэлийн шуудан ирлээ')],
-        ['Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)],
         ['SMS', 'sms:?&body=' + encodeURIComponent(text)]
       ].forEach(function (s) {
         var a = el('a', 'btn ghost', s[0]);
         a.href = s[1]; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        if (s[0] === 'Instagram') {
+          // Instagram has no share link, so copy the link first and open the app; the sender pastes it into a chat.
+          a.addEventListener('click', function () {
+            try { navigator.clipboard.writeText(url); } catch (e) { $('share-link').select(); }
+            setStatus('done-status', 'Холбоос хуулагдлаа. Instagram дээр найзынхаа чат руу буулгаж илгээнэ үү.', 'good');
+          });
+        }
         share.appendChild(a);
       });
       setStatus('done-status', 'Карт бэлэн боллоо. Холбоосыг хүлээн авагчдаа илгээнэ үү.', 'good');
