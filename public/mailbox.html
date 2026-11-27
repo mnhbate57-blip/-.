@@ -2,6 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>__TITLE__</title>
 <meta name="description" content="Энд дарж карт бичээд илгээгээрэй. Бүртгэл шаардахгүй.">
@@ -37,7 +38,8 @@
   <section id="view-compose" class="compose" aria-labelledby="compose-title">
     <form class="panel" id="form" novalidate>
       <h2 id="compose-title">Мэндчилгээ бичих</h2>
-      <div class="sub"><span class="legend" id="type-legend">Загвар</span><div class="opts" id="types" role="group" aria-labelledby="type-legend"></div></div>
+      <div class="sub"><span class="legend step" id="type-legend">1. Загвараа сонго</span><div class="tiles" id="types" role="group" aria-labelledby="type-legend"></div></div>
+      <span class="legend step">2. Мэндчилгээгээ бич</span>
       <div class="field"><label for="from">Хэнээс</label><input type="text" id="from" maxlength="60" placeholder="Таны нэр" autocomplete="nickname"></div>
       <div class="field">
         <label for="message">Зурвас</label>
@@ -65,6 +67,16 @@
       <div id="preview"></div>
     </div>
   </section>
+
+  <details class="panel claim" id="claim">
+    <summary>Энэ таны хайрцаг уу?</summary>
+    <p class="note">Хайрцгаа үүсгэсэн төхөөрөмж, хөтөч дээрээ бол энэ хуудас танийг автоматаар таниад ирсэн картуудыг тань шууд харуулна. Өөр хөтөч (жишээ нь Instagram дотор) дээр нээсэн бол нууц холбоосоо нэг удаа буулгана уу.</p>
+    <div class="linkbox">
+      <input type="text" id="claim-input" placeholder="Нууц холбоосоо буулгах" aria-label="Нууц холбоос" autocomplete="off">
+      <button type="button" class="btn ghost" id="claim-btn">Нээх</button>
+    </div>
+    <div class="status" id="claim-status" role="status"></div>
+  </details>
 
   <section id="view-sent" class="panel sent" hidden aria-labelledby="sent-title">
     <h2 id="sent-title">Илгээгдлээ</h2>
