@@ -24,7 +24,7 @@
     var d = draft(), ghost = !d.message;
     var c = Object.assign(look(), {
       to: owner, from: d.from || 'Таны нэр',
-      message: d.message || 'Чамд баяр баясгалан, эрүүл энх, үргэлж инээмсэглэл хүсье.',
+      message: d.message || 'Чамд баяр баясал, эрүүл энх, аз жаргалыг хүсье.',
       createdAt: Date.now(), imageSrcs: pics, videoSrc: vid ? vid.url : ''
     });
     var box = $('preview'); box.textContent = '';
