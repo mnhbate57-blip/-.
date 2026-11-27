@@ -140,8 +140,18 @@
     var box = $('types');
     box.textContent = '';
     SC.TEMPLATE_ORDER.forEach(function (k) {
-      var p = SC.PALETTES[SC.TEMPLATES[k].pal].c;
-      box.appendChild(optButton(SC.TEMPLATES[k].label, D.type === k, function () { applyTemplate(k); syncColors(); renderControls(); renderPreview(); }, null, 'linear-gradient(150deg,' + p[0] + ',' + p[1] + ')'));
+      var t = SC.TEMPLATES[k], p = SC.PALETTES[t.pal].c;
+      var b = el('button', 'tile');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(D.type === k));
+      b.style.background = 'linear-gradient(150deg,' + p[0] + ',' + p[1] + ')';
+      b.style.color = p[2];
+      var ic = el('span', 'tile-ic');
+      ic.innerHTML = SC.MOTIFS[t.motif].svg;
+      b.appendChild(ic);
+      b.appendChild(el('span', 'tile-name', t.label));
+      b.addEventListener('click', function () { applyTemplate(k); syncColors(); renderControls(); renderPreview(); });
+      box.appendChild(b);
     });
     var pb = $('palettes');
     pb.textContent = '';
